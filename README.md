@@ -27,9 +27,7 @@ xarf-parser-tests/
 │       ├── business_rule_violations/  # Business logic validation failures
 │       ├── missing_fields/            # Required field validation failures
 │       └── malformed_data/            # Data format validation failures
-├── schemas/
-│   ├── v4/                           # XARF v4 JSON schemas
-│   └── v3/                           # XARF v3 JSON schemas (for backward compatibility)
+├── (schemas referenced from xarf-spec repo)  # JSON schemas live in specification repository
 ├── test-definitions/
 │   ├── test-cases.json               # Language-agnostic test case definitions
 │   ├── validation-rules.json         # Expected validation behavior
@@ -70,9 +68,9 @@ git subtree pull --prefix=tests/shared https://github.com/xarf/xarf-parser-tests
   - Contradictory data combinations
   - Malformed JSON structure
 
-### Schema Definitions (`schemas/`)
-- **Purpose**: Provide canonical JSON schemas for validation
-- **Usage**: Reference implementations and validation tools
+### Schema Definitions (from xarf-spec repository)
+- **Purpose**: Canonical JSON schemas live in the specification repository
+- **Usage**: Parsers reference https://github.com/xarf/xarf-spec/schemas/ for validation
 - **Versions**: Both v4 (current) and v3 (backward compatibility)
 
 ### Test Definitions (`test-definitions/`)
