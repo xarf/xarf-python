@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xarf-parser"
+version = "4.0.0a1"
+description = "XARF v4 Python Parser - Parse and validate XARF v4 abuse reports"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "XARF Project", email = "contact@xarf.org"}
+]
+maintainers = [
+    {name = "XARF Project", email = "contact@xarf.org"}
+]
+keywords = ["xarf", "abuse", "security", "parser", "validation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking :: Monitoring"
+]
+requires-python = ">=3.8"
+dependencies = [
+    "jsonschema>=4.0.0",
+    "python-dateutil>=2.8.0",
+    "email-validator>=2.0.0",
+    "pydantic>=2.0.0"
+]
+
+[project.urls]
+"Homepage" = "https://xarf.org"
+"Documentation" = "https://github.com/xarf/xarf-parser-python"
+"Repository" = "https://github.com/xarf/xarf-parser-python"
+"Bug Reports" = "https://github.com/xarf/xarf-parser-python/issues"
+"Specification" = "https://github.com/xarf/xarf-spec"
+"Changelog" = "https://github.com/xarf/xarf-parser-python/blob/master/CHANGELOG.md"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0", 
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "isort>=5.0.0",
+    "pre-commit>=3.0.0"
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["xarf*"]
+
+[tool.setuptools.package-data]
+xarf = ["schemas/*.json"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-v --cov=xarf --cov-report=term-missing --cov-report=html"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["xarf"]
+omit = ["tests/*", "setup.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError"
+]
