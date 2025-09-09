@@ -1,0 +1,203 @@
+{
+  "test_suite_version": "1.0.0",
+  "xarf_version_target": "4.0.0",
+  "last_updated": "2024-09-09",
+  "description": "Comprehensive test case definitions for XARF v4 parsers",
+  
+  "test_categories": {
+    "valid_samples": {
+      "description": "Valid XARF reports that should parse successfully",
+      "expectation": "success",
+      "base_path": "samples/valid",
+      "test_groups": [
+        {
+          "name": "v4_messaging",
+          "path": "v4/messaging",
+          "description": "XARF v4 messaging class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "Parsed objects must have correct class field",
+            "Evidence data must be accessible",
+            "All messaging-specific fields must be preserved"
+          ]
+        },
+        {
+          "name": "v4_connection", 
+          "path": "v4/connection",
+          "description": "XARF v4 connection class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "Network-specific fields must be preserved",
+            "Port and protocol information must be accessible"
+          ]
+        },
+        {
+          "name": "v4_content",
+          "path": "v4/content", 
+          "description": "XARF v4 content class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "URL and content-type fields must be preserved",
+            "Evidence screenshots must be accessible"
+          ]
+        },
+        {
+          "name": "v4_infrastructure",
+          "path": "v4/infrastructure",
+          "description": "XARF v4 infrastructure class reports", 
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "Malware family and C2 information must be preserved",
+            "CVE and compromise indicators must be accessible"
+          ]
+        },
+        {
+          "name": "v4_copyright",
+          "path": "v4/copyright",
+          "description": "XARF v4 copyright class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "Rights holder information must be preserved",
+            "Infringement details must be accessible"
+          ]
+        },
+        {
+          "name": "v4_vulnerability", 
+          "path": "v4/vulnerability",
+          "description": "XARF v4 vulnerability class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "CVE information and CVSS scores must be preserved",
+            "Service and configuration data must be accessible"
+          ]
+        },
+        {
+          "name": "v4_reputation",
+          "path": "v4/reputation", 
+          "description": "XARF v4 reputation class reports",
+          "requirements": [
+            "Parser must successfully parse all samples",
+            "Threat intelligence data must be preserved",
+            "Confidence scores and sources must be accessible"
+          ]
+        },
+        {
+          "name": "v3_backward_compatibility",
+          "path": "v3",
+          "description": "XARF v3 reports for backward compatibility testing",
+          "requirements": [
+            "Parser must successfully parse v3 format",
+            "Automatic conversion to v4 structure should occur", 
+            "Core abuse information must be preserved",
+            "Class mapping from v3 to v4 must be correct"
+          ]
+        }
+      ]
+    },
+    
+    "invalid_samples": {
+      "description": "Invalid XARF reports that should fail validation",
+      "expectation": "validation_failure",
+      "base_path": "samples/invalid",
+      "test_groups": [
+        {
+          "name": "schema_violations",
+          "path": "schema_violations", 
+          "description": "Reports that violate JSON schema requirements",
+          "requirements": [
+            "Parser must reject all samples",
+            "Error messages must indicate schema violation",
+            "Specific field violations should be identified"
+          ]
+        },
+        {
+          "name": "business_rule_violations",
+          "path": "business_rule_violations",
+          "description": "Reports that violate business logic rules",
+          "requirements": [
+            "Parser must reject all samples",
+            "Error messages must indicate business rule violation",
+            "Class-specific validation rules must be enforced"
+          ]
+        },
+        {
+          "name": "missing_fields",
+          "path": "missing_fields",
+          "description": "Reports missing required fields",
+          "requirements": [
+            "Parser must reject all samples",
+            "Error messages must identify missing required fields",
+            "Required field validation must be comprehensive"
+          ]
+        },
+        {
+          "name": "malformed_data", 
+          "path": "malformed_data",
+          "description": "Reports with malformed JSON or data",
+          "requirements": [
+            "Parser must handle malformed input gracefully",
+            "Error messages must be descriptive",
+            "Parser must not crash on invalid input"
+          ]
+        }
+      ]
+    }
+  },
+  
+  "performance_requirements": {
+    "parsing_speed": {
+      "typical_report": {
+        "max_time_ms": 1,
+        "description": "Typical report under 5KB should parse in under 1ms"
+      },
+      "large_report": {
+        "max_time_ms": 10,
+        "description": "Large report with multiple evidence items should parse in under 10ms"
+      }
+    },
+    "memory_usage": {
+      "parser_instance": {
+        "max_memory_mb": 100,
+        "description": "Parser instance should use less than 100MB of memory"
+      },
+      "batch_processing": {
+        "max_memory_growth_mb": 50,
+        "description": "Memory usage should not grow more than 50MB when processing 1000 reports"
+      }
+    },
+    "throughput": {
+      "reports_per_second": {
+        "min_throughput": 1000,
+        "description": "Parser should handle at least 1000 reports per second"
+      }
+    }
+  },
+  
+  "compatibility_requirements": {
+    "xarf_versions": {
+      "v4_support": {
+        "required": true,
+        "description": "Full XARF v4 support is mandatory"
+      },
+      "v3_support": {
+        "required": true,
+        "description": "XARF v3 backward compatibility is required"
+      }
+    },
+    "evidence_types": {
+      "supported_content_types": [
+        "text/plain",
+        "text/html", 
+        "message/rfc822",
+        "image/png",
+        "image/jpeg",
+        "application/pdf",
+        "application/json"
+      ],
+      "base64_encoding": {
+        "required": true,
+        "description": "Must support base64-encoded evidence payloads"
+      }
+    }
+  }
+}
