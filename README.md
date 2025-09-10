@@ -50,6 +50,21 @@ else:
     print("Validation errors:", parser.get_errors())
 ```
 
+## 📋 JSON Schema Validation
+
+This parser uses the official JSON schemas from the [XARF specification repository](https://github.com/xarf/xarf-spec/tree/main/schemas/v4):
+
+```python
+# Validate against official XARF v4 schema
+from xarf.validation import validate_xarf_report
+
+# Schema URLs reference the spec repository
+validation_result = validate_xarf_report(
+    report_json, 
+    schema_url="https://raw.githubusercontent.com/xarf/xarf-spec/main/schemas/v4/xarf-v4-master.json"
+)
+```
+
 ## 📋 Features
 
 ### Current (Alpha)
