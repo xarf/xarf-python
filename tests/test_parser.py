@@ -126,12 +126,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser(strict=False)

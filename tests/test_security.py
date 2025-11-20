@@ -1,9 +1,10 @@
 """Security-focused tests for UUID generation and timestamp formatting."""
 
-import pytest
-import uuid
 import re
+import uuid
 from datetime import datetime, timezone
+
+
 from xarf import XARFParser
 
 
@@ -19,12 +20,12 @@ class TestUUIDGeneration:
             "reporter": {
                 "org": "Test Org",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -46,8 +47,8 @@ class TestUUIDGeneration:
     def test_uuid_format_validation(self):
         """Test UUID format conforms to RFC 4122."""
         uuid_pattern = re.compile(
-            r'^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
-            re.IGNORECASE
+            r"^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+            re.IGNORECASE,
         )
 
         # Generate and test 100 UUIDs
@@ -62,7 +63,9 @@ class TestUUIDGeneration:
             # Check version (should be 4)
             assert test_uuid.version == 4, f"Wrong UUID version: {test_uuid.version}"
             # Check variant (should be RFC 4122)
-            assert test_uuid.variant == uuid.RFC_4122, f"Wrong UUID variant: {test_uuid.variant}"
+            assert (
+                test_uuid.variant == uuid.RFC_4122
+            ), f"Wrong UUID variant: {test_uuid.variant}"
 
     def test_uuid_randomness(self):
         """Test UUID randomness (simple entropy check)."""
@@ -74,7 +77,7 @@ class TestUUIDGeneration:
 
         # Check no sequential patterns
         for i in range(1, len(uuids)):
-            assert uuids[i] != uuids[i-1], "Sequential UUIDs detected"
+            assert uuids[i] != uuids[i - 1], "Sequential UUIDs detected"
 
     def test_report_id_string_format(self):
         """Test that report_id accepts string UUIDs."""
@@ -85,12 +88,12 @@ class TestUUIDGeneration:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -112,12 +115,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -133,12 +136,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -154,12 +157,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -186,18 +189,20 @@ class TestTimestampFormatting:
                 "reporter": {
                     "org": "Test",
                     "contact": "test@example.com",
-                    "type": "automated"
+                    "type": "automated",
                 },
                 "source_identifier": "192.0.2.1",
                 "category": "messaging",
                 "type": "spam",
-                "evidence_source": "spamtrap"
+                "evidence_source": "spamtrap",
             }
 
             result = parser.validate(report_data)
             assert result is False, f"Invalid timestamp accepted: {invalid_ts}"
             errors = parser.get_errors()
-            assert any("Invalid timestamp format" in error for error in errors), f"No timestamp error for: {invalid_ts}"
+            assert any(
+                "Invalid timestamp format" in error for error in errors
+            ), f"No timestamp error for: {invalid_ts}"
 
     def test_timestamp_ordering(self):
         """Test timestamp chronological ordering."""
@@ -216,12 +221,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -248,12 +253,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -273,12 +278,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -310,12 +315,12 @@ class TestSecurityEdgeCases:
                 "reporter": {
                     "org": "Test",
                     "contact": "test@example.com",
-                    "type": "automated"
+                    "type": "automated",
                 },
                 "source_identifier": "192.0.2.1",
                 "category": "messaging",
                 "type": "spam",
-                "evidence_source": "spamtrap"
+                "evidence_source": "spamtrap",
             }
 
             # Parser should accept any string as report_id
@@ -334,12 +339,12 @@ class TestSecurityEdgeCases:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -356,12 +361,12 @@ class TestSecurityEdgeCases:
             "reporter": {
                 "org": "Test\x00Org",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()

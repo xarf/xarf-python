@@ -1,7 +1,6 @@
 """Comprehensive validation tests for all XARF categories."""
 
-import pytest
-from xarf import XARFParser, XARFValidationError
+from xarf import XARFParser
 
 
 class TestCategoryValidation:
@@ -16,12 +15,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Email Provider",
                 "contact": "abuse@emailprovider.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
         parser = XARFParser()
@@ -38,14 +37,14 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Network Monitor",
                 "contact": "security@network.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.2",
             "category": "connection",
             "type": "ddos",
             "evidence_source": "honeypot",
             "destination_ip": "203.0.113.1",
-            "protocol": "tcp"
+            "protocol": "tcp",
         }
 
         parser = XARFParser()
@@ -62,13 +61,13 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Web Security",
                 "contact": "security@websec.com",
-                "type": "manual"
+                "type": "manual",
             },
             "source_identifier": "192.0.2.3",
             "category": "content",
             "type": "phishing_site",
             "evidence_source": "user_report",
-            "url": "http://phishing.example.com"
+            "url": "http://phishing.example.com",
         }
 
         parser = XARFParser()
@@ -85,12 +84,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Security Research",
                 "contact": "research@security.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.4",
             "category": "infrastructure",
             "type": "open_resolver",
-            "evidence_source": "automated_scan"
+            "evidence_source": "automated_scan",
         }
 
         parser = XARFParser(strict=False)
@@ -109,12 +108,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Copyright Holder",
                 "contact": "legal@copyright.com",
-                "type": "manual"
+                "type": "manual",
             },
             "source_identifier": "192.0.2.5",
             "category": "copyright",
             "type": "file_sharing",
-            "evidence_source": "manual_analysis"
+            "evidence_source": "manual_analysis",
         }
 
         parser = XARFParser(strict=False)
@@ -130,12 +129,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Vulnerability Scanner",
                 "contact": "vuln@scanner.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.6",
             "category": "vulnerability",
             "type": "cve",
-            "evidence_source": "vulnerability_scan"
+            "evidence_source": "vulnerability_scan",
         }
 
         parser = XARFParser(strict=False)
@@ -151,12 +150,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Reputation Service",
                 "contact": "rep@service.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.7",
             "category": "reputation",
             "type": "blacklist",
-            "evidence_source": "threat_intelligence"
+            "evidence_source": "threat_intelligence",
         }
 
         parser = XARFParser(strict=False)
@@ -172,12 +171,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Other Reporter",
                 "contact": "other@reporter.com",
-                "type": "manual"
+                "type": "manual",
             },
             "source_identifier": "192.0.2.8",
             "category": "other",
             "type": "custom_type",
-            "evidence_source": "manual_analysis"
+            "evidence_source": "manual_analysis",
         }
 
         parser = XARFParser(strict=False)
@@ -197,12 +196,12 @@ class TestMandatoryFields:
             "reporter": {
                 "org": "Test Organization",
                 "contact": "abuse@test.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
-            "evidence_source": "spamtrap"
+            "evidence_source": "spamtrap",
         }
 
     def test_missing_xarf_version(self):
@@ -368,13 +367,13 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
             "evidence_source": "spamtrap",
-            "protocol": "smtp"
+            "protocol": "smtp",
             # Missing smtp_from and subject for spam
         }
 
@@ -394,12 +393,12 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated"
+                "type": "automated",
             },
             "source_identifier": "192.0.2.1",
             "category": "connection",
             "type": "ddos",
-            "evidence_source": "honeypot"
+            "evidence_source": "honeypot",
             # Missing destination_ip and protocol
         }
 
@@ -419,12 +418,12 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "manual"
+                "type": "manual",
             },
             "source_identifier": "192.0.2.1",
             "category": "content",
             "type": "phishing_site",
-            "evidence_source": "user_report"
+            "evidence_source": "user_report",
             # Missing url
         }
 

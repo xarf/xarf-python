@@ -1,9 +1,13 @@
 """Tests for XARF Report Generator (if implemented)."""
 
-import pytest
 import uuid
 from datetime import datetime, timezone
-from xarf.models import XARFReport, MessagingReport, ConnectionReport, ContentReport, XARFReporter
+
+
+from xarf.models import (
+    MessagingReport,
+    XARFReporter,
+)
 
 
 class TestReportGeneration:
@@ -12,9 +16,7 @@ class TestReportGeneration:
     def test_create_messaging_report(self):
         """Test creating a messaging report programmatically."""
         reporter = XARFReporter(
-            org="Test Organization",
-            contact="abuse@test.com",
-            type="automated"
+            org="Test Organization", contact="abuse@test.com", type="automated"
         )
 
         report = MessagingReport(
@@ -28,7 +30,7 @@ class TestReportGeneration:
             evidence_source="spamtrap",
             protocol="smtp",
             smtp_from="spammer@example.com",
-            subject="Spam Message"
+            subject="Spam Message",
         )
 
         assert report.category == "messaging"

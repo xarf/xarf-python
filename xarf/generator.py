@@ -35,8 +35,14 @@ class XARFGenerator:
 
     # Valid categories as per XARF spec
     VALID_CATEGORIES = {
-        "abuse", "messaging", "connection", "content",
-        "copyright", "infrastructure", "vulnerability", "reputation"
+        "abuse",
+        "messaging",
+        "connection",
+        "content",
+        "copyright",
+        "infrastructure",
+        "vulnerability",
+        "reputation",
     }
 
     # Valid types per category
@@ -44,29 +50,62 @@ class XARFGenerator:
         "abuse": ["ddos", "malware", "phishing", "spam", "scanner"],
         "vulnerability": ["cve", "misconfiguration", "open_service"],
         "connection": [
-            "compromised", "botnet", "malicious_traffic", "ddos",
-            "port_scan", "login_attack", "sql_injection", "reconnaissance",
-            "scraping", "vuln_scanning", "bot", "infected_host"
+            "compromised",
+            "botnet",
+            "malicious_traffic",
+            "ddos",
+            "port_scan",
+            "login_attack",
+            "sql_injection",
+            "reconnaissance",
+            "scraping",
+            "vuln_scanning",
+            "bot",
+            "infected_host",
         ],
         "content": [
-            "illegal", "malicious", "policy_violation", "phishing",
-            "malware", "fraud", "exposed_data", "csam", "csem",
-            "brand_infringement", "suspicious_registration", "remote_compromise"
+            "illegal",
+            "malicious",
+            "policy_violation",
+            "phishing",
+            "malware",
+            "fraud",
+            "exposed_data",
+            "csam",
+            "csem",
+            "brand_infringement",
+            "suspicious_registration",
+            "remote_compromise",
         ],
         "copyright": [
-            "infringement", "dmca", "trademark", "p2p",
-            "cyberlocker", "link_site", "ugc_platform", "usenet", "copyright"
+            "infringement",
+            "dmca",
+            "trademark",
+            "p2p",
+            "cyberlocker",
+            "link_site",
+            "ugc_platform",
+            "usenet",
+            "copyright",
         ],
         "messaging": ["bulk_messaging", "spam"],
         "reputation": ["blocklist", "threat_intelligence"],
-        "infrastructure": ["botnet", "compromised_server"]
+        "infrastructure": ["botnet", "compromised_server"],
     }
 
     # Valid evidence sources
     VALID_EVIDENCE_SOURCES = {
-        "spamtrap", "honeypot", "user_report", "automated_scan",
-        "manual_analysis", "vulnerability_scan", "researcher_analysis",
-        "threat_intelligence", "flow_analysis", "ids_ips", "siem"
+        "spamtrap",
+        "honeypot",
+        "user_report",
+        "automated_scan",
+        "manual_analysis",
+        "vulnerability_scan",
+        "researcher_analysis",
+        "threat_intelligence",
+        "flow_analysis",
+        "ids_ips",
+        "siem",
     }
 
     # Valid reporter types
@@ -84,12 +123,11 @@ class XARFGenerator:
         "copyright": ["text/html", "image/png", "application/pdf"],
         "messaging": ["message/rfc822", "text/plain", "text/html"],
         "reputation": ["application/json", "text/plain", "text/csv"],
-        "infrastructure": ["application/pcap", "text/plain", "application/json"]
+        "infrastructure": ["application/pcap", "text/plain", "application/json"],
     }
 
     def __init__(self) -> None:
         """Initialize the XARF generator."""
-        pass
 
     def generate_uuid(self) -> str:
         """Generate a UUID v4 for report identification.
@@ -146,7 +184,7 @@ class XARFGenerator:
             64
         """
         if isinstance(data, str):
-            data = data.encode('utf-8')
+            data = data.encode("utf-8")
 
         if algorithm == "sha256":
             return hashlib.sha256(data).hexdigest()
@@ -164,7 +202,7 @@ class XARFGenerator:
         content_type: str,
         description: str,
         payload: Union[str, bytes],
-        hash_algorithm: str = "sha256"
+        hash_algorithm: str = "sha256",
     ) -> Dict[str, str]:
         """Create an evidence item with automatic hashing.
 
@@ -189,10 +227,10 @@ class XARFGenerator:
         """
         if isinstance(payload, bytes):
             payload_bytes = payload
-            payload_str = payload.decode('utf-8', errors='ignore')
+            payload_str = payload.decode("utf-8", errors="ignore")
         else:
             payload_str = payload
-            payload_bytes = payload.encode('utf-8')
+            payload_bytes = payload.encode("utf-8")
 
         evidence_hash = self.generate_hash(payload_bytes, hash_algorithm)
 
@@ -200,7 +238,7 @@ class XARFGenerator:
             "content_type": content_type,
             "description": description,
             "payload": payload_str,
-            "hash": evidence_hash
+            "hash": evidence_hash,
         }
 
     def generate_report(
@@ -220,7 +258,7 @@ class XARFGenerator:
         tags: Optional[List[str]] = None,
         occurrence: Optional[Dict[str, str]] = None,
         target: Optional[Dict[str, Any]] = None,
-        additional_fields: Optional[Dict[str, Any]] = None
+        additional_fields: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Generate a complete XARF v4.0.0 report.
 
@@ -314,14 +352,11 @@ class XARFGenerator:
             "xarf_version": self.XARF_VERSION,
             "report_id": self.generate_uuid(),
             "timestamp": self.generate_timestamp(),
-            "reporter": {
-                "contact": reporter_contact,
-                "type": reporter_type
-            },
+            "reporter": {"contact": reporter_contact, "type": reporter_type},
             "source_identifier": source_identifier,
             "category": category,
             "type": report_type,
-            "evidence_source": evidence_source
+            "evidence_source": evidence_source,
         }
 
         # Add optional reporter fields
@@ -366,9 +401,7 @@ class XARFGenerator:
         return report
 
     def generate_random_evidence(
-        self,
-        category: str,
-        description: Optional[str] = None
+        self, category: str, description: Optional[str] = None
     ) -> Dict[str, str]:
         """Generate random sample evidence for testing purposes.
 
@@ -386,10 +419,7 @@ class XARFGenerator:
             True
         """
         # Select appropriate content type for category
-        content_types = self.EVIDENCE_CONTENT_TYPES.get(
-            category,
-            ["text/plain"]
-        )
+        content_types = self.EVIDENCE_CONTENT_TYPES.get(category, ["text/plain"])
         content_type = secrets.choice(content_types)
 
         # Generate random payload data
@@ -401,9 +431,7 @@ class XARFGenerator:
             description = f"Sample {category} evidence data"
 
         return self.add_evidence(
-            content_type=content_type,
-            description=description,
-            payload=payload
+            content_type=content_type, description=description, payload=payload
         )
 
     def generate_sample_report(
@@ -411,7 +439,7 @@ class XARFGenerator:
         category: str,
         report_type: str,
         include_evidence: bool = True,
-        include_optional: bool = True
+        include_optional: bool = True,
     ) -> Dict[str, Any]:
         """Generate a sample XARF report with randomized data for testing.
 
@@ -441,9 +469,7 @@ class XARFGenerator:
 
         valid_types = self.EVENT_TYPES.get(category, [])
         if report_type not in valid_types:
-            raise XARFError(
-                f"Invalid type '{report_type}' for category '{category}'"
-            )
+            raise XARFError(f"Invalid type '{report_type}' for category '{category}'")
 
         # Generate random test data
         source_ip = f"192.0.2.{secrets.randbelow(256)}"
@@ -453,13 +479,11 @@ class XARFGenerator:
             "Abuse Response Team",
             "Network Security Team",
             "Threat Intelligence Unit",
-            "SOC Team"
+            "SOC Team",
         ]
         reporter_org = secrets.choice(sample_orgs)
 
-        sample_domains = [
-            "example.com", "security.net", "abuse.org", "soc.io"
-        ]
+        sample_domains = ["example.com", "security.net", "abuse.org", "soc.io"]
         reporter_contact = f"abuse@{secrets.choice(sample_domains)}"
 
         # Build report parameters
@@ -469,14 +493,12 @@ class XARFGenerator:
             "source_identifier": source_ip,
             "reporter_contact": reporter_contact,
             "reporter_org": reporter_org,
-            "description": f"Sample {report_type} report for testing"
+            "description": f"Sample {report_type} report for testing",
         }
 
         # Add evidence if requested
         if include_evidence:
-            params["evidence"] = [
-                self.generate_random_evidence(category)
-            ]
+            params["evidence"] = [self.generate_random_evidence(category)]
 
         # Add optional fields if requested
         if include_optional:
@@ -488,18 +510,17 @@ class XARFGenerator:
             target_ip = f"203.0.113.{secrets.randbelow(256)}"
             params["target"] = {
                 "ip": target_ip,
-                "port": secrets.choice([53, 80, 443, 8080, 22, 25])
+                "port": secrets.choice([53, 80, 443, 8080, 22, 25]),
             }
 
             # Add occurrence time range
             now = datetime.now(timezone.utc)
             start = datetime.fromtimestamp(
-                now.timestamp() - secrets.randbelow(7200),
-                tz=timezone.utc
+                now.timestamp() - secrets.randbelow(7200), tz=timezone.utc
             )
             params["occurrence"] = {
                 "start": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "end": now.strftime("%Y-%m-%dT%H:%M:%SZ")
+                "end": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
             }
 
         return self.generate_report(**params)

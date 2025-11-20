@@ -7,7 +7,8 @@ Run this after installing the xarf package: pip install -e .
 """
 
 import json
-from xarf import XARFGenerator, XARFError
+
+from xarf import XARFError, XARFGenerator
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
             report_type="ddos",
             source_identifier="192.0.2.100",
             reporter_contact="abuse@example.com",
-            reporter_org="Security Operations Center"
+            reporter_org="Security Operations Center",
         )
         print(json.dumps(report, indent=2))
     except XARFError as e:
@@ -39,7 +40,7 @@ def main():
         evidence = generator.add_evidence(
             content_type="text/html",
             description="Source code of phishing page",
-            payload="<html><head><title>Login</title></head><body>Fake login form</body></html>"
+            payload="<html><head><title>Login</title></head><body>Fake login form</body></html>",
         )
 
         report = generator.generate_report(
@@ -52,7 +53,7 @@ def main():
             evidence=[evidence],
             severity="high",
             confidence=0.95,
-            tags=["phishing", "brand-impersonation", "credential-theft"]
+            tags=["phishing", "brand-impersonation", "credential-theft"],
         )
         print(json.dumps(report, indent=2))
     except XARFError as e:
@@ -70,10 +71,10 @@ def main():
             reporter_org="Copyright Protection Agency",
             on_behalf_of={
                 "org": "Movie Studio Inc.",
-                "contact": "legal@moviestudio.com"
+                "contact": "legal@moviestudio.com",
             },
             description="Unauthorized distribution of copyrighted content",
-            severity="medium"
+            severity="medium",
         )
         print(json.dumps(report, indent=2))
     except XARFError as e:
@@ -86,7 +87,7 @@ def main():
         log_evidence = generator.add_evidence(
             content_type="text/plain",
             description="Vulnerability scan results",
-            payload="CVE-2025-12345 detected on port 443\nRemote Code Execution possible"
+            payload="CVE-2025-12345 detected on port 443\nRemote Code Execution possible",
         )
 
         report = generator.generate_report(
@@ -102,20 +103,17 @@ def main():
             severity="critical",
             confidence=0.98,
             tags=["cve-2025-12345", "rce", "critical", "web-server"],
-            occurrence={
-                "start": "2025-01-20T10:00:00Z",
-                "end": "2025-01-20T11:30:00Z"
-            },
+            occurrence={"start": "2025-01-20T10:00:00Z", "end": "2025-01-20T11:30:00Z"},
             target={
                 "ip": "203.0.113.100",
                 "port": 443,
-                "url": "https://vulnerable.example.com"
+                "url": "https://vulnerable.example.com",
             },
             additional_fields={
                 "cve_id": "CVE-2025-12345",
                 "cvss_score": 9.8,
-                "affected_component": "web-server v2.1.0"
-            }
+                "affected_component": "web-server v2.1.0",
+            },
         )
         print(json.dumps(report, indent=2))
     except XARFError as e:
@@ -129,7 +127,7 @@ def main():
             category="messaging",
             report_type="spam",
             include_evidence=True,
-            include_optional=True
+            include_optional=True,
         )
         print(json.dumps(sample, indent=2))
     except XARFError as e:
@@ -160,7 +158,7 @@ def main():
             category="invalid_category",
             report_type="test",
             source_identifier="192.0.2.1",
-            reporter_contact="abuse@example.com"
+            reporter_contact="abuse@example.com",
         )
     except XARFError as e:
         print(f"✓ Caught expected error: {e}")
@@ -171,7 +169,7 @@ def main():
             category="connection",
             report_type="invalid_type",
             source_identifier="192.0.2.1",
-            reporter_contact="abuse@example.com"
+            reporter_contact="abuse@example.com",
         )
     except XARFError as e:
         print(f"✓ Caught expected error: {e}")
@@ -182,7 +180,7 @@ def main():
             category="connection",
             report_type="ddos",
             source_identifier="",  # Empty!
-            reporter_contact="abuse@example.com"
+            reporter_contact="abuse@example.com",
         )
     except XARFError as e:
         print(f"✓ Caught expected error: {e}")
