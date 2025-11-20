@@ -64,5 +64,5 @@ Thumbs.db
 
 # Temporary files
 *.tmp
-*.temp.claude-flow/
+.claude-flow/
 .swarm/
