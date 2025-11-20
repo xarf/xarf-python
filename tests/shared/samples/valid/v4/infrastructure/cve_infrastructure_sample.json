@@ -9,7 +9,7 @@
   },
   "source_identifier": "203.0.113.99",
   "source_port": 8080,
-  "class": "infrastructure",
+  "category": "infrastructure",
   "type": "cve",
   "evidence_source": "researcher_analysis",
   "cve_id": "CVE-2023-46604",

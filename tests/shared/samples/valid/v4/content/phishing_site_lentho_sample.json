@@ -8,7 +8,7 @@
     "type": "manual"
   },
   "source_identifier": "malicious-example.net",
-  "class": "content",
+  "category": "content",
   "type": "phishing_site",
   "evidence_source": "crawler",
   "url": "https://malicious-example.net/de-DE?referral=AZG3167JVKA",

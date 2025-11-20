@@ -1,0 +1,162 @@
+########################################################################################################################
+# CODE QUALITY AND SECURITY CHECKS FOR XARF PARSER
+########################################################################################################################
+name: Quality Checks
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:
+
+jobs:
+  quality-checks:
+    name: "${{ matrix.check.name }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.check.timeout || 10 }}
+    continue-on-error: ${{ !matrix.check.blocking }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        check:
+          - name: "Import Ordering (isort)"
+            tool: isort
+            version: "5.13.2"
+            command: "isort --check-only --diff --profile black --line-length 88 xarf/ tests/"
+            blocking: true
+          - name: "Code Formatting (black)"
+            tool: black
+            version: "24.3.0"
+            command: "black --check xarf/ tests/"
+            blocking: true
+          - name: "Code Style (flake8)"
+            tool: flake8
+            version: "7.0.0"
+            command: "flake8 xarf/ tests/ --max-line-length=88 --extend-ignore=E203,W503"
+            blocking: true
+          - name: "Security Scan (bandit)"
+            tool: bandit
+            version: "1.7.8"
+            command: "bandit -r xarf/ -f txt"
+            blocking: true
+          - name: "Type Hints (mypy)"
+            tool: mypy
+            version: "1.9.0"
+            command: "mypy --config-file=pyproject.toml xarf/"
+            warning: "Type check warnings found (not blocking)"
+            blocking: false
+          - name: "Docstring Coverage (pydocstyle)"
+            tool: pydocstyle
+            version: "6.3.0"
+            command: "pydocstyle xarf/"
+            warning: "Docstring warnings found (not blocking)"
+            blocking: false
+          - name: "Complexity Metrics (radon)"
+            tool: radon
+            version: "6.0.1"
+            command: "radon cc --min B --show-complexity xarf/"
+            warning: "Complexity warnings found (not blocking)"
+            blocking: false
+          - name: "Test Coverage (pytest-cov)"
+            tool: pytest-cov
+            needs_install: true
+            timeout: 20
+            command: "pytest --cov=xarf --cov-report=term --cov-report=json --cov-report=html tests/"
+            warning: "Coverage below threshold (not blocking)"
+            blocking: false
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: echo "::group::Setup ${{ matrix.check.tool }} environment"
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Cache Tool Dependencies
+        if: ${{ ! matrix.check.needs_install }}
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.check.tool }}-${{ matrix.check.version }}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.check.tool }}-
+
+      - name: Install Tool
+        if: ${{ ! matrix.check.needs_install }}
+        run: pip install ${{ matrix.check.tool }}==${{ matrix.check.version }}
+
+      - name: Install Project Dependencies
+        if: ${{ matrix.check.needs_install }}
+        run: |
+          pip install -e ".[dev,test]"
+
+      - name: End Setup Group
+        run: echo "::endgroup::"
+
+      - name: Run ${{ matrix.check.tool }}
+        run: |
+          echo "::group::Running ${{ matrix.check.tool }} check"
+          set -o pipefail
+          if [ "${{ matrix.check.blocking }}" = "true" ]; then
+            # Blocking checks: fail if check fails
+            ${{ matrix.check.command }} 2>&1 | tee ${{ matrix.check.tool }}.log
+          else
+            # Warn-only checks: show warning but don't fail
+            ${{ matrix.check.command }} 2>&1 | tee ${{ matrix.check.tool }}.log || {
+              echo "::warning::${{ matrix.check.warning }}"
+              exit 0
+            }
+          fi
+          echo "::endgroup::"
+
+      - name: Coverage Report Summary
+        if: matrix.check.tool == 'pytest-cov'
+        run: |
+          echo "::group::Coverage Summary"
+          if [ -f coverage.json ]; then
+            python -c "import json; data=json.load(open('coverage.json')); print(f\"Total coverage: {data['totals']['percent_covered_display']}%\")"
+          fi
+          echo "::endgroup::"
+
+      - name: Upload Coverage Reports
+        if: matrix.check.tool == 'pytest-cov'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            coverage.json
+            htmlcov/
+          retention-days: 30
+
+      - name: Upload Check Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.check.tool }}-logs-${{ github.run_id }}
+          path: ${{ matrix.check.tool }}.log
+          retention-days: 7
+
+  quality-summary:
+    name: Quality Checks Summary
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: always()
+    steps:
+      - name: Check Quality Status
+        run: |
+          if [ "${{ needs.quality-checks.result }}" == "failure" ]; then
+            echo "::error::One or more quality checks failed"
+            exit 1
+          elif [ "${{ needs.quality-checks.result }}" == "cancelled" ]; then
+            echo "::warning::Quality checks were cancelled"
+            exit 1
+          else
+            echo "::notice::All quality checks passed"
+          fi

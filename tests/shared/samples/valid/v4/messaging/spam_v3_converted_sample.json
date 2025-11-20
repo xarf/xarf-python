@@ -10,7 +10,7 @@
   },
   "source_identifier": "203.0.113.75",
   "source_port": 25,
-  "class": "messaging",
+  "category": "messaging",
   "type": "spam",
   "evidence_source": "unknown",
   "protocol": "smtp",

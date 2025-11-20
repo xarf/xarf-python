@@ -1,0 +1,58 @@
+# Trivy configuration for XARF Python parser
+# Based on abusix-parsers security standards
+
+# Scan settings
+scan:
+  # Scan for both vulnerabilities and secrets
+  security-checks:
+    - vuln
+    - secret
+
+# Vulnerability settings
+vulnerability:
+  # Type of vulnerability sources
+  type:
+    - os
+    - library
+
+  # Severity levels to report
+  severity:
+    - LOW
+    - MEDIUM
+    - HIGH
+    - CRITICAL
+
+# Secret scanning settings
+secret:
+  # Additional secret scanning patterns
+  config: |
+    # AWS credentials
+    - name: AWS Access Key ID
+      regex: '(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'
+
+    # API Keys
+    - name: Generic API Key
+      regex: '(?i)(api[_-]?key|apikey)["\s:=]+[a-zA-Z0-9_\-]{20,}'
+
+    # Private Keys
+    - name: Private Key
+      regex: '-----BEGIN (RSA|DSA|EC|OPENSSH) PRIVATE KEY-----'
+
+    # GitHub tokens
+    - name: GitHub Token
+      regex: 'gh[pousr]_[A-Za-z0-9_]{36,}'
+
+# File path patterns to skip
+skip-files:
+  - "**/.git/**"
+  - "**/node_modules/**"
+  - "**/.venv/**"
+  - "**/venv/**"
+  - "**/__pycache__/**"
+  - "**/*.pyc"
+  - "**/dist/**"
+  - "**/build/**"
+  - "**/.pytest_cache/**"
+  - "**/.mypy_cache/**"
+  - "**/htmlcov/**"
+  - "**/*.egg-info/**"

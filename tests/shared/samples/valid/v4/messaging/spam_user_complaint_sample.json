@@ -9,7 +9,7 @@
   },
   "source_identifier": "209.85.220.65",
   "source_port": 25,
-  "class": "messaging",
+  "category": "messaging",
   "type": "spam",
   "evidence_source": "user_complaint",
   "protocol": "smtp",

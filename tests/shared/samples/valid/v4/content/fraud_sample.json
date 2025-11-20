@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "192.0.2.211",
-  "class": "content",
+  "category": "content",
   "type": "fraud",
   "evidence_source": "user_report",
   "url": "http://fake-crypto-exchange.example.com/invest",

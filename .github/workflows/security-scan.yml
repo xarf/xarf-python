@@ -1,0 +1,216 @@
+########################################################################################################################
+# SECURITY SCANNING FOR XARF PARSER
+# Runs weekly and on-demand to check for security vulnerabilities
+########################################################################################################################
+name: Security Scan
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  push:
+    branches: [main, master]
+    paths:
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+      - '.github/workflows/security-scan.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  security-events: write
+
+jobs:
+  dependency-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install pip-audit
+        run: pip install pip-audit==2.7.2
+
+      - name: Install Project Dependencies
+        run: pip install -e ".[dev,test]"
+
+      - name: Run pip-audit for CVE Scanning
+        id: pip-audit
+        run: |
+          echo "::group::Running pip-audit"
+          pip-audit --desc --format json --output pip-audit.json || true
+          pip-audit --desc --format markdown --output pip-audit.md || true
+          pip-audit --desc || echo "VULNERABILITIES_FOUND=true" >> $GITHUB_ENV
+          echo "::endgroup::"
+
+      - name: Upload pip-audit Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-results
+          path: |
+            pip-audit.json
+            pip-audit.md
+          retention-days: 90
+
+      - name: Check for Vulnerabilities
+        if: env.VULNERABILITIES_FOUND == 'true'
+        run: |
+          echo "::error::Security vulnerabilities found in dependencies"
+          cat pip-audit.md
+          exit 1
+
+  code-security-scan:
+    name: Code Security Scan (Bandit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Bandit
+        run: pip install bandit==1.7.8
+
+      - name: Run Bandit Security Scan
+        id: bandit
+        run: |
+          echo "::group::Running bandit"
+          bandit -r xarf/ -f json -o bandit.json || true
+          bandit -r xarf/ -f txt -o bandit.txt || true
+          bandit -r xarf/ || echo "SECURITY_ISSUES_FOUND=true" >> $GITHUB_ENV
+          echo "::endgroup::"
+
+      - name: Upload Bandit Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-results
+          path: |
+            bandit.json
+            bandit.txt
+          retention-days: 90
+
+      - name: Check for Security Issues
+        if: env.SECURITY_ISSUES_FOUND == 'true'
+        run: |
+          echo "::error::Security issues found in code"
+          cat bandit.txt
+          exit 1
+
+  trivy-scan:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy Security Scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'secret,vuln'
+          severity: 'MEDIUM,HIGH,CRITICAL'
+          exit-code: '1'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy Results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Upload Trivy Results as Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-results
+          path: trivy-results.sarif
+          retention-days: 90
+
+  create-security-issue:
+    name: Create Security Issue
+    runs-on: ubuntu-latest
+    needs: [dependency-audit, code-security-scan, trivy-scan]
+    if: failure() && github.event_name == 'schedule'
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: security-reports
+
+      - name: Create Security Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const date = new Date().toISOString().split('T')[0];
+
+            let body = `## Security Scan Alert - ${date}\n\n`;
+            body += `Automated security scans have detected potential vulnerabilities.\n\n`;
+            body += `### Scan Results\n\n`;
+
+            // Check which scans failed
+            const jobs = context.payload.workflow_run?.jobs || [];
+            const failedJobs = jobs.filter(job => job.conclusion === 'failure');
+
+            if (failedJobs.length > 0) {
+              body += `**Failed Scans:**\n`;
+              failedJobs.forEach(job => {
+                body += `- ${job.name}\n`;
+              });
+            }
+
+            body += `\n### Action Required\n\n`;
+            body += `1. Review the workflow run: ${context.payload.repository.html_url}/actions/runs/${context.runId}\n`;
+            body += `2. Download and examine the security reports\n`;
+            body += `3. Address vulnerabilities according to severity\n`;
+            body += `4. Update dependencies or fix code issues\n`;
+            body += `5. Re-run security scan to verify fixes\n\n`;
+            body += `### Artifacts\n\n`;
+            body += `Security reports are available in the workflow artifacts.\n`;
+
+            // Create the issue
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔒 Security Scan Alert - ${date}`,
+              body: body,
+              labels: ['security', 'automated']
+            });
+
+  security-summary:
+    name: Security Scan Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-audit, code-security-scan, trivy-scan]
+    if: always()
+    steps:
+      - name: Check Security Status
+        run: |
+          if [ "${{ needs.dependency-audit.result }}" == "failure" ] || \
+             [ "${{ needs.code-security-scan.result }}" == "failure" ] || \
+             [ "${{ needs.trivy-scan.result }}" == "failure" ]; then
+            echo "::error::Security vulnerabilities detected"
+            exit 1
+          else
+            echo "::notice::All security scans passed"
+          fi

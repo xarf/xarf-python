@@ -121,11 +121,11 @@ def test_valid_samples():
     parser = XARFParser()
     valid_dir = "tests/shared/samples/valid/v4"
     
-    for class_dir in os.listdir(valid_dir):
-        class_path = os.path.join(valid_dir, class_dir)
-        for sample_file in os.listdir(class_path):
+    for category_dir in os.listdir(valid_dir):
+        category_path = os.path.join(valid_dir, category_dir)
+        for sample_file in os.listdir(category_path):
             if sample_file.endswith('.json'):
-                with open(os.path.join(class_path, sample_file)) as f:
+                with open(os.path.join(category_path, sample_file)) as f:
                     report = parser.parse(f.read())
                     assert report is not None
                     assert report.xarf_version == "4.0.0"

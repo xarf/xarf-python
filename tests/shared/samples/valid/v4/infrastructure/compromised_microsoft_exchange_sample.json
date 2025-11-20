@@ -9,7 +9,7 @@
   },
   "source_identifier": "172.16.10.50",
   "source_port": 443,
-  "class": "infrastructure",
+  "category": "infrastructure",
   "type": "compromised_microsoft_exchange",
   "evidence_source": "automated_discovery",
   "exchange_version": "Microsoft Exchange Server 2019",

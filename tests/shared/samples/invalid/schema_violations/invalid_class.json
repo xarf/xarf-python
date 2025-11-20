@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "192.168.1.100",
-  "class": "invalid_class_name",
+  "category": "invalid_class_name",
   "type": "spam",
   "evidence_source": "spamtrap",
   "evidence": []

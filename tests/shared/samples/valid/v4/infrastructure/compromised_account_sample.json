@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "198.51.100.88",
-  "class": "infrastructure",
+  "category": "infrastructure",
   "type": "compromised_account",
   "evidence_source": "traffic_analysis",
   "account_type": "email",

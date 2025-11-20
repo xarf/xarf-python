@@ -7,14 +7,16 @@ __version__ = "4.0.0a1"
 __author__ = "XARF Project"
 __email__ = "contact@xarf.org"
 
-from .parser import XARFParser
+from .exceptions import XARFError, XARFParseError, XARFValidationError
+from .generator import XARFGenerator
 from .models import XARFReport
-from .exceptions import XARFError, XARFValidationError, XARFParseError
+from .parser import XARFParser
 
 __all__ = [
     "XARFParser",
-    "XARFReport", 
+    "XARFReport",
     "XARFError",
     "XARFValidationError",
     "XARFParseError",
+    "XARFGenerator",
 ]

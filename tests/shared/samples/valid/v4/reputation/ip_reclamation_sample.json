@@ -8,7 +8,7 @@
     "type": "manual"
   },
   "source_identifier": "203.0.113.175",
-  "class": "reputation",
+  "category": "reputation",
   "type": "ip_reclamation",
   "evidence_source": "researcher_analysis",
   "threat_type": "former_botnet_ip",

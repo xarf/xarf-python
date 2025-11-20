@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "198.51.100.199",
-  "class": "reputation",
+  "category": "reputation",
   "type": "trap",
   "evidence_source": "automated_analysis",
   "threat_type": "scanning_source",

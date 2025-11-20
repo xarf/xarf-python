@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "192.0.2.133",
-  "class": "content",
+  "category": "content",
   "type": "web_hack",
   "evidence_source": "automated_scan",
   "url": "http://e-commerce-site.example.com/admin",

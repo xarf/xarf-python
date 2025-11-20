@@ -3,7 +3,7 @@
   "report_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "timestamp": "2024-01-15T14:30:25Z",
   "source_identifier": "192.168.1.100",
-  "class": "messaging",
+  "category": "messaging",
   "type": "spam",
   "evidence_source": "spamtrap",
   "evidence": []

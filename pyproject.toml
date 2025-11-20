@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "xarf-parser"
+name = "xarf"
 version = "4.0.0a1"
 description = "XARF v4 Python Parser - Parse and validate XARF v4 abuse reports"
 readme = "README.md"
@@ -16,14 +16,14 @@ maintainers = [
 ]
 keywords = ["xarf", "abuse", "security", "parser", "validation"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9", 
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -51,12 +51,17 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
-    "pytest-cov>=4.0.0", 
+    "pytest-cov>=4.0.0",
     "black>=23.0.0",
     "flake8>=6.0.0",
     "mypy>=1.0.0",
     "isort>=5.0.0",
-    "pre-commit>=3.0.0"
+    "pre-commit>=3.0.0",
+    "bandit[toml]>=1.7.0",
+    "pydocstyle[toml]>=6.0.0",
+    "radon>=6.0.0",
+    "pip-audit>=2.0.0",
+    "pylint>=2.0.0"
 ]
 test = [
     "pytest>=7.0.0",
@@ -105,3 +110,59 @@ exclude_lines = [
     "raise AssertionError",
     "raise NotImplementedError"
 ]
+
+[tool.flake8]
+max-line-length = 100
+extend-ignore = ["E203", "W503", "C901"]
+per-file-ignores = [
+    "__init__.py:F401"
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv", "build", "dist"]
+skips = ["B101", "B601"]
+
+[tool.pydocstyle]
+convention = "google"
+add_ignore = ["D100", "D104", "D105", "D107"]
+match = "(?!test_).*\\.py"
+match_dir = "^(?!tests|venv|\\.venv|build|dist).*"
+
+[tool.pylint.master]
+ignore = ["CVS"]
+ignore-patterns = [".*_test\\.py"]
+jobs = 1
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-docstring",
+    "bare-except",
+    "locally-disabled",
+    "broad-except",
+    "unused-argument",
+    "no-member"
+]
+
+[tool.pylint.format]
+max-line-length = 100
+indent-string = "    "
+indent-after-paren = 4
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_", "ip"]
+bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
+
+[tool.pylint.design]
+max-args = 10
+max-locals = 15
+max-returns = 6
+max-branches = 12
+max-statements = 50
+max-attributes = 10
+min-public-methods = 1
+max-public-methods = 20
+
+[tool.radon]
+exclude = ["tests/*", "venv/*", ".venv/*", "build/*", "dist/*"]
+show_complexity = true
+show_mi = true

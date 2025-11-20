@@ -8,7 +8,7 @@
     "type": "manual"
   },
   "source_identifier": "+447955527026",
-  "class": "messaging",
+  "category": "messaging",
   "type": "social_engineering",
   "evidence_source": "user_report",
   "protocol": "whatsapp",

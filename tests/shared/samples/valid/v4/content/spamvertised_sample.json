@@ -8,7 +8,7 @@
     "type": "automated"
   },
   "source_identifier": "198.51.100.222",
-  "class": "content",
+  "category": "content",
   "type": "spamvertised",
   "evidence_source": "spam_analysis",
   "url": "http://discount-pharmacy.example.com/order",

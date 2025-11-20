@@ -1,0 +1,127 @@
+########################################################################################################################
+# CONTINUOUS INTEGRATION WORKFLOW
+# Main CI workflow that runs on every PR and push
+# Based on abusix-parsers CI standards
+########################################################################################################################
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-checks:
+    name: "Quality Checks"
+    uses: ./.github/workflows/quality-checks.yml
+
+  test-suite:
+    name: "Test Suite"
+    needs: quality-checks
+    uses: ./.github/workflows/test-suite.yml
+
+  ci-summary:
+    name: "CI Summary"
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test-suite]
+    if: always()
+
+    steps:
+      - name: Check CI Results
+        run: |
+          echo "::group::CI Results Summary"
+
+          QUALITY_STATUS="${{ needs.quality-checks.result }}"
+          TEST_STATUS="${{ needs.test-suite.result }}"
+
+          echo "Quality Checks: $QUALITY_STATUS"
+          echo "Test Suite: $TEST_STATUS"
+
+          if [ "$QUALITY_STATUS" = "failure" ] || [ "$TEST_STATUS" = "failure" ]; then
+            echo "::error::CI pipeline failed. Please review the logs above."
+            exit 1
+          elif [ "$QUALITY_STATUS" = "cancelled" ] || [ "$TEST_STATUS" = "cancelled" ]; then
+            echo "::warning::CI pipeline was cancelled."
+            exit 1
+          else
+            echo "✅ All CI checks passed successfully!"
+          fi
+
+          echo "::endgroup::"
+
+      - name: Add PR Comment
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const qualityStatus = '${{ needs.quality-checks.result }}';
+            const testStatus = '${{ needs.test-suite.result }}';
+
+            let emoji = '✅';
+            let message = 'All CI checks passed!';
+
+            if (qualityStatus === 'failure' || testStatus === 'failure') {
+              emoji = '❌';
+              message = 'Some CI checks failed. Please review the workflow logs.';
+            } else if (qualityStatus === 'cancelled' || testStatus === 'cancelled') {
+              emoji = '⚠️';
+              message = 'CI checks were cancelled.';
+            }
+
+            const comment = `## ${emoji} CI Results
+
+            | Check | Status |
+            |-------|--------|
+            | Quality Checks | ${qualityStatus === 'success' ? '✅' : qualityStatus === 'failure' ? '❌' : '⚠️'} ${qualityStatus} |
+            | Test Suite | ${testStatus === 'success' ? '✅' : testStatus === 'failure' ? '❌' : '⚠️'} ${testStatus} |
+
+            ${message}
+
+            [View workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('CI Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
