@@ -41,7 +41,7 @@ jobs:
           fail_ci_if_error: false
 
   lint:
-    name: Lint and Format
+    name: Code Quality
     runs-on: ubuntu-latest
 
     steps:
@@ -58,16 +58,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev,test]"
 
-      - name: Run black
+      - name: 1. Format check (black)
         run: black --check .
 
-      - name: Run flake8
+      - name: 2. Import sorting (isort)
+        run: isort --check-only --profile black .
+
+      - name: 3. Linting (flake8)
         run: flake8 xarf/ tests/
 
-      - name: Run mypy
+      - name: 4. Code complexity (radon)
+        run: radon cc xarf/ -a -nb
+        continue-on-error: true
+
+      - name: 5. Maintainability index (radon)
+        run: radon mi xarf/ -nb
+        continue-on-error: true
+
+      - name: 6. Type checking (mypy)
         run: mypy xarf/
         continue-on-error: true
 
-      - name: Run bandit security check
+      - name: 7. Security scanning (bandit)
         run: bandit -r xarf/ -ll
+
+      - name: 8. Docstring coverage (pydocstyle)
+        run: pydocstyle xarf/
+        continue-on-error: true
+
+      - name: 9. Unused code detection (vulture)
+        run: vulture xarf/ --min-confidence 80
         continue-on-error: true

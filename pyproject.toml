@@ -61,7 +61,8 @@ dev = [
     "pydocstyle[toml]>=6.0.0",
     "radon>=6.0.0",
     "pip-audit>=2.0.0",
-    "pylint>=2.0.0"
+    "pylint>=2.0.0",
+    "vulture>=2.0.0"
 ]
 test = [
     "pytest>=7.0.0",
