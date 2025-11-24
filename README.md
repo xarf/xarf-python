@@ -523,7 +523,7 @@ This project follows semantic versioning with alpha/beta releases:
 
 - `4.0.0a1`, `4.0.0a2` - Alpha releases (current)
 - `4.0.0b1`, `4.0.0b2` - Beta releases (planned)
-- `4.0.0` - Stable release (Q2 2024)
+- `4.0.0` - Stable release (Q1 2026)
 
 ## 🎯 Roadmap
 
@@ -537,7 +537,7 @@ This project follows semantic versioning with alpha/beta releases:
 - [ ] Evidence handling improvements
 - [ ] Performance benchmarks
 
-### Beta Phase (Q1 2024)
+### Beta Phase (Q4 2025)
 
 - [ ] Complete category coverage (all 7)
 - [ ] XARF v3 compatibility layer
@@ -545,7 +545,7 @@ This project follows semantic versioning with alpha/beta releases:
 - [ ] CLI tools
 - [ ] Comprehensive documentation
 
-### Stable Release (Q2 2024)
+### Stable Release (Q1 2026)
 
 - [ ] Production-ready performance
 - [ ] >95% test coverage
