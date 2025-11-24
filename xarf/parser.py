@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Union
 
 from .exceptions import XARFParseError, XARFValidationError
 from .models import ConnectionReport, ContentReport, MessagingReport, XARFReport
+from .v3_compat import convert_v3_to_v4, is_v3_report
 
 
 class XARFParser:
@@ -30,6 +31,8 @@ class XARFParser:
     def parse(self, json_data: Union[str, Dict[str, Any]]) -> XARFReport:
         """Parse XARF report from JSON.
 
+        Supports both XARF v4 and v3 (with automatic conversion).
+
         Args:
             json_data: JSON string or dictionary containing XARF report
 
@@ -49,6 +52,13 @@ class XARFParser:
                 data = json_data
         except json.JSONDecodeError as e:
             raise XARFParseError(f"Invalid JSON: {e}")
+
+        # Auto-detect and convert v3 reports
+        if is_v3_report(data):
+            try:
+                data = convert_v3_to_v4(data)
+            except Exception as e:
+                raise XARFParseError(f"Failed to convert XARF v3 report: {e}")
 
         # Validate basic structure
         if not self.validate_structure(data):

@@ -39,6 +39,40 @@ pip install -e ".[dev]"
 
 ---
 
+## ✨ XARF v3 Backwards Compatibility
+
+**Automatic conversion from XARF v3 to v4!** This parser transparently handles legacy v3 reports with automatic conversion and deprecation warnings.
+
+```python
+from xarf import XARFParser
+
+parser = XARFParser()
+
+# Works seamlessly with both v3 and v4 reports
+v3_report = '''
+{
+  "Version": "3.0.0",
+  "ReporterInfo": {
+    "ReporterOrg": "Security Team",
+    "ReporterOrgEmail": "abuse@example.com"
+  },
+  "Report": {
+    "ReportClass": "Messaging",
+    "ReportType": "spam",
+    ...
+  }
+}
+'''
+
+# Automatically converted to v4 format
+report = parser.parse(v3_report)
+print(f"Category: {report.category}")  # messaging
+```
+
+See the **[Migration Guide](docs/migration-guide.md)** for complete v3 to v4 conversion details.
+
+---
+
 ## 🔧 Quick Start
 
 ### Parsing XARF Reports
@@ -143,16 +177,18 @@ validation_result = validate_xarf_report(
 - ✅ **Evidence Handling**: Support for text, images, and binary evidence
 - ✅ **Category Support**: messaging, connection, content
 - ✅ **Reporter Info**: Including `on_behalf_of` for infrastructure providers
+- ✅ **XARF v3 Compatibility**: Automatic conversion with deprecation warnings
+- ✅ **Pydantic V2**: Modern validation with full type safety
 - ✅ **Python 3.8-3.12**: Full compatibility
 
 ### Planned (Beta)
 
 - 🚧 Complete category coverage (all 7 categories)
 - 🚧 Advanced validation rules (business logic)
-- 🚧 XARF v3 backward compatibility layer
 - 🚧 Evidence compression support
 - 🚧 Bulk processing utilities
 - 🚧 Performance optimizations
+- 🚧 CLI tools for validation and conversion
 
 ### Future
 
@@ -406,7 +442,7 @@ mypy xarf/
 ## 📚 Documentation
 
 - **[XARF v4 Specification](https://xarf.org/docs/specification/)** - Complete technical reference
-- **[Migration Guide](docs/MIGRATION_GUIDE.md)** - Upgrading to v4.0.0 (class → category)
+- **[v3 to v4 Migration Guide](docs/migration-guide.md)** - Automatic conversion and compatibility
 - **[CHANGELOG](CHANGELOG.md)** - Version history and breaking changes
 - **[Sample Reports](https://xarf.org/docs/types/)** - Real-world examples by category
 - **[Common Fields](https://xarf.org/docs/common-fields/)** - Field reference

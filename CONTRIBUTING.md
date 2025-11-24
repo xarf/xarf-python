@@ -219,7 +219,7 @@ SAMPLE_SPAM_REPORT = {
         "type": "automated"
     },
     "source_identifier": "192.0.2.1",  # RFC 3330 test IP
-    "class": "messaging",
+    "category": "messaging",
     "type": "spam",
     "evidence_source": "spamtrap"
 }

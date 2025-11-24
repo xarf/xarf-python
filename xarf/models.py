@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class XARFReporter(BaseModel):
@@ -44,12 +44,14 @@ class XARFReport(BaseModel):
     # Category-specific fields (will be populated based on category)
     additional_fields: Optional[Dict[str, Any]] = {}
 
-    class Config:
-        allow_population_by_field_name = True
-        extra = "allow"  # Allow additional fields for category-specific data
+    model_config = ConfigDict(
+        populate_by_name=True,
+        extra="allow",  # Allow additional fields for category-specific data
+    )
 
-    @validator("category")
-    def validate_category(cls, v):
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, v: str) -> str:
         """Validate XARF category field."""
         valid_categories = {
             "messaging",
@@ -67,8 +69,9 @@ class XARFReport(BaseModel):
             )
         return v
 
-    @validator("evidence_source")
-    def validate_evidence_source(cls, v):
+    @field_validator("evidence_source")
+    @classmethod
+    def validate_evidence_source(cls, v: str) -> str:
         """Validate evidence source field."""
         valid_sources = {
             "spamtrap",
