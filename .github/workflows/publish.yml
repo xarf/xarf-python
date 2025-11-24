@@ -1,7 +1,3 @@
-########################################################################################################################
-# PYPI PUBLISHING FOR XARF PARSER
-# Publishes package to PyPI on release tags
-########################################################################################################################
 name: Publish to PyPI
 
 on:
@@ -10,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       test_pypi:
-        description: 'Publish to Test PyPI instead of PyPI'
+        description: 'Publish to Test PyPI instead'
         required: false
         type: boolean
         default: true
@@ -19,184 +15,59 @@ permissions:
   contents: read
 
 jobs:
-  validate-release:
-    name: Validate Release
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get-version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set Up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Get Version from pyproject.toml
-        id: get-version
-        run: |
-          VERSION=$(python -c "import tomli; print(tomli.load(open('pyproject.toml', 'rb'))['project']['version'])" 2>/dev/null || \
-                    python -c "import re; content = open('pyproject.toml').read(); version = re.search(r'version\s*=\s*[\"\\']([^\"\\'^]+)[\"\\']', content); print(version.group(1) if version else '')")
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "Package version: ${VERSION}"
-
-      - name: Validate Version Format
-        run: |
-          VERSION="${{ steps.get-version.outputs.version }}"
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(a[0-9]+|b[0-9]+|rc[0-9]+)?$ ]]; then
-            echo "::error::Invalid version format: $VERSION"
-            exit 1
-          fi
-
-      - name: Check Tag Matches Version
-        if: github.event_name == 'release'
-        run: |
-          TAG_VERSION="${{ github.event.release.tag_name }}"
-          TAG_VERSION="${TAG_VERSION#v}"  # Remove 'v' prefix if present
-          PACKAGE_VERSION="${{ steps.get-version.outputs.version }}"
-
-          if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
-            echo "::error::Tag version ($TAG_VERSION) does not match package version ($PACKAGE_VERSION)"
-            exit 1
-          fi
-
-  run-tests:
-    name: Run Full Test Suite
-    needs: validate-release
-    uses: ./.github/workflows/test.yml
-
-  run-quality-checks:
-    name: Run Quality Checks
-    needs: validate-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set Up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Install Dependencies
-        run: |
-          pip install black==24.3.0 flake8==7.0.0 isort==5.13.2
-          pip install -e ".[dev,test]"
-
-      - name: Run Quality Checks
-        run: |
-          black --check xarf/ tests/
-          flake8 xarf/ tests/ --max-line-length=88 --extend-ignore=E203,W503
-          isort --check-only --profile black xarf/ tests/
-
   build:
-    name: Build Distribution
-    needs: [validate-release, run-tests, run-quality-checks]
+    name: Build distribution
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set Up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
-      - name: Install Build Tools
+      - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
           pip install build twine
 
-      - name: Build Package
+      - name: Build package
         run: python -m build
 
-      - name: Check Package
+      - name: Check distribution
         run: twine check dist/*
 
-      - name: Display Package Info
-        run: |
-          echo "::group::Built Packages"
-          ls -lh dist/
-          echo "::endgroup::"
-
-          echo "::group::Package Metadata"
-          tar -tzf dist/*.tar.gz | head -20
-          echo "::endgroup::"
-
-      - name: Upload Build Artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist-packages
+          name: python-package-distributions
           path: dist/
-          retention-days: 30
 
-  publish-test-pypi:
-    name: Publish to Test PyPI
-    needs: build
-    if: |
-      (github.event_name == 'workflow_dispatch' && inputs.test_pypi) ||
-      (github.event_name == 'release' && github.event.release.prerelease)
+  publish:
+    name: Publish to PyPI
+    needs: [build]
     runs-on: ubuntu-latest
     environment:
-      name: test-pypi
-      url: https://test.pypi.org/project/xarf-parser/
+      name: pypi
+      url: https://pypi.org/p/xarf
     permissions:
       id-token: write
+
     steps:
-      - name: Download Build Artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist-packages
+          name: python-package-distributions
           path: dist/
 
       - name: Publish to Test PyPI
+        if: inputs.test_pypi == true
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
           skip-existing: true
-          verbose: true
-
-  publish-pypi:
-    name: Publish to PyPI
-    needs: build
-    if: |
-      (github.event_name == 'workflow_dispatch' && !inputs.test_pypi) ||
-      (github.event_name == 'release' && !github.event.release.prerelease)
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/project/xarf-parser/
-    permissions:
-      id-token: write
-    steps:
-      - name: Download Build Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-packages
-          path: dist/
 
       - name: Publish to PyPI
+        if: github.event_name == 'release'
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          verbose: true
-
-  publish-summary:
-    name: Publish Summary
-    runs-on: ubuntu-latest
-    needs: [publish-test-pypi, publish-pypi]
-    if: always()
-    steps:
-      - name: Check Publish Status
-        run: |
-          if [ "${{ needs.publish-test-pypi.result }}" == "success" ]; then
-            echo "::notice::Successfully published to Test PyPI"
-          fi
-          if [ "${{ needs.publish-pypi.result }}" == "success" ]; then
-            echo "::notice::Successfully published to PyPI"
-          fi
-          if [ "${{ needs.publish-test-pypi.result }}" == "failure" ] || \
-             [ "${{ needs.publish-pypi.result }}" == "failure" ]; then
-            echo "::error::Publishing failed"
-            exit 1
-          fi

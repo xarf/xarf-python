@@ -1,5 +1,6 @@
 # XARF v4 Python Parser
 
+[![CI](https://github.com/xarf/xarf-python/actions/workflows/ci.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![Python versions](https://img.shields.io/pypi/pyversions/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -426,18 +427,35 @@ git clone https://github.com/xarf/xarf-parser-python.git
 cd xarf-parser-python
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -e ".[dev]"
+pip install -e ".[dev,test]"
 
-# Run tests
-pytest
+# Run tests with coverage
+pytest --cov=xarf --cov-report=term -v tests/
 
-# Run linting
-flake8 xarf/
-black xarf/
-
-# Type checking
+# Run quality checks
+black --check .
+flake8 xarf/ tests/
 mypy xarf/
+
+# Auto-format code
+black .
 ```
+
+### CI/CD Workflows
+
+This project uses two GitHub Actions workflows:
+
+1. **CI Workflow** (`.github/workflows/ci.yml`)
+   - Runs on every push to `main` and all pull requests
+   - Tests against Python 3.8, 3.9, 3.10, 3.11, and 3.12
+   - Runs linting checks: black, flake8, mypy
+   - Uploads coverage reports to Codecov
+
+2. **PyPI Publish Workflow** (`.github/workflows/publish.yml`)
+   - Runs on GitHub releases
+   - Manual workflow dispatch with Test PyPI option
+   - Builds distribution packages
+   - Publishes to PyPI or Test PyPI
 
 ## 📚 Documentation
 
