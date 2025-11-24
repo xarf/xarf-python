@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   test:
-    name: Test Python ${{ matrix.python-version }}
+    name: Python ${{ matrix.python-version }} Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,8 +40,8 @@ jobs:
         with:
           fail_ci_if_error: false
 
-  quality:
-    name: ${{ matrix.check.name }}
+  code-quality:
+    name: Code Quality - ${{ matrix.check.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
