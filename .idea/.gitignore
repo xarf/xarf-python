@@ -1,0 +1,30 @@
+# User-specific stuff
+workspace.xml
+tasks.xml
+usage.statistics.xml
+dictionaries
+shelf/
+
+# Generated files
+contentModel.xml
+uiDesigner.xml
+
+# Sensitive or high-churn files
+dataSources/
+dataSources.ids
+dataSources.local.xml
+sqlDataSources.xml
+dynamic.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# CMake
+cmake-build-*/
+
+# File-based project format
+*.iws
+
+# IntelliJ
+out/

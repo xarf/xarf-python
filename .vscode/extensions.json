@@ -1,0 +1,39 @@
+{
+  "recommendations": [
+    // Python essentials
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-python.mypy-type-checker",
+
+    // Testing
+    "littlefoxteam.vscode-python-test-adapter",
+    "ryanluker.vscode-coverage-gutters",
+
+    // Code quality
+    "ms-python.flake8",
+    "usernamehw.errorlens",
+
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // YAML/JSON
+    "redhat.vscode-yaml",
+    "ZainChen.json",
+
+    // GitHub
+    "github.vscode-pull-request-github",
+    "github.copilot",
+
+    // Markdown
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint",
+
+    // Utilities
+    "christian-kohler.path-intellisense",
+    "visualstudioexptteam.vscodeintellicode",
+    "gruntfuggly.todo-tree"
+  ]
+}

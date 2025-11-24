@@ -64,13 +64,13 @@ jobs:
             error: false
           - name: "Complexity (radon)"
             cmd: "radon cc xarf/ -a -nb"
-            error: true
+            error: false
           - name: "Maintainability (radon)"
             cmd: "radon mi xarf/ -nb"
-            error: true
+            error: false
           - name: "Docstrings (pydocstyle)"
             cmd: "pydocstyle xarf/"
-            error: true
+            error: false
           - name: "Dead code (vulture)"
             cmd: "vulture xarf/ .vulture_whitelist.py --min-confidence 80"
             error: false

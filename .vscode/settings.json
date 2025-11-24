@@ -1,0 +1,104 @@
+{
+  // Python configuration
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+
+  // Formatting
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // Black formatter
+  "black-formatter.args": [
+    "--line-length=88"
+  ],
+
+  // isort
+  "isort.args": [
+    "--profile=black",
+    "--line-length=88"
+  ],
+
+  // Linting
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Args": [
+    "--max-line-length=100",
+    "--extend-ignore=E203,W503,C901"
+  ],
+  "python.linting.banditEnabled": true,
+  "python.linting.banditArgs": [
+    "-r",
+    "xarf/",
+    "-ll"
+  ],
+  "python.linting.mypyEnabled": true,
+  "python.linting.mypyArgs": [
+    "--strict",
+    "--python-version=3.8"
+  ],
+  "python.linting.pydocstyleEnabled": true,
+  "python.linting.pydocstyleArgs": [
+    "--convention=google",
+    "--add-ignore=D100,D104,D105,D107"
+  ],
+  "python.linting.lintOnSave": true,
+
+  // Testing
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests",
+    "-v",
+    "--cov=xarf",
+    "--cov-report=term-missing"
+  ],
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+
+  // Editor
+  "editor.rulers": [88, 100],
+  "editor.trimAutoWhitespace": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
+
+  // File associations
+  "files.associations": {
+    "*.yaml": "yaml",
+    "*.yml": "yaml",
+    ".vulture_whitelist.py": "python"
+  },
+
+  // Exclude from file watcher
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/.venv/**": true,
+    "**/venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.mypy_cache/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/*.egg-info/**": true
+  },
+
+  // Search exclude
+  "search.exclude": {
+    "**/.venv": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/*.egg-info": true,
+    "**/.coverage": true,
+    "**/htmlcov": true
+  }
+}

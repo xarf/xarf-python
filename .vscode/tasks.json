@@ -1,0 +1,141 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install Dependencies",
+      "type": "shell",
+      "command": "pip install -e '.[dev,test]'",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "pytest --cov=xarf --cov-report=term-missing -v tests/",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Run Tests with Coverage",
+      "type": "shell",
+      "command": "pytest --cov=xarf --cov-report=html --cov-report=term-missing -v tests/",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Format Code (Black)",
+      "type": "shell",
+      "command": "black .",
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "Sort Imports (isort)",
+      "type": "shell",
+      "command": "isort --profile black .",
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "Lint (flake8)",
+      "type": "shell",
+      "command": "flake8 xarf/ tests/",
+      "group": "build",
+      "problemMatcher": "$python",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Type Check (mypy)",
+      "type": "shell",
+      "command": "mypy xarf/",
+      "group": "build",
+      "problemMatcher": "$python",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Security Scan (bandit)",
+      "type": "shell",
+      "command": "bandit -r xarf/ -ll",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Dead Code Check (vulture)",
+      "type": "shell",
+      "command": "vulture xarf/ .vulture_whitelist.py --min-confidence 80",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Code Quality - All Checks",
+      "type": "shell",
+      "command": "black --check . && isort --check-only --profile black . && flake8 xarf/ tests/ && bandit -r xarf/ -ll && mypy xarf/ && vulture xarf/ .vulture_whitelist.py --min-confidence 80",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Pre-commit Run All",
+      "type": "shell",
+      "command": "pre-commit run --all-files",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Install Pre-commit Hooks",
+      "type": "shell",
+      "command": "pre-commit install",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Build Package",
+      "type": "shell",
+      "command": "python -m build",
+      "group": "build",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Clean Build Artifacts",
+      "type": "shell",
+      "command": "rm -rf build/ dist/ *.egg-info .pytest_cache .mypy_cache .coverage htmlcov/",
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      }
+    }
+  ]
+}
