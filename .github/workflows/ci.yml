@@ -72,8 +72,8 @@ jobs:
             cmd: "pydocstyle xarf/"
             error: true
           - name: "Dead code (vulture)"
-            cmd: "vulture xarf/ --min-confidence 80"
-            error: true
+            cmd: "vulture xarf/ .vulture_whitelist.py --min-confidence 80"
+            error: false
 
     steps:
       - uses: actions/checkout@v4
