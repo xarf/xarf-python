@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example Anti-Spam Service",
     "contact": "reports@antispam-service.example",
-    "type": "automated"
+    "domain": "antispam-service.example"
   },
   "source_identifier": "203.0.113.88",
   "source_port": 25,
@@ -38,5 +38,10 @@
     ],
     "billing_impact": true,
     "notes": "Customer contacted. Investigating compromised account."
+  },
+  "sender": {
+    "org": "Example Anti-Spam Service",
+    "contact": "reports@antispam-service.example",
+    "domain": "antispam-service.example"
   }
 }

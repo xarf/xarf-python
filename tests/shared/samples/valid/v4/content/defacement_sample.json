@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Website Defacement Monitor",
     "contact": "defacements@webmonitor.sec",
-    "type": "automated"
+    "domain": "webmonitor.sec"
   },
   "source_identifier": "203.0.113.88",
   "category": "content",
@@ -61,5 +61,10 @@
       "law_enforcement_notified": true,
       "media_attention_risk": "high"
     }
+  },
+  "sender": {
+    "org": "Website Defacement Monitor",
+    "contact": "defacements@webmonitor.sec",
+    "domain": "webmonitor.sec"
   }
 }

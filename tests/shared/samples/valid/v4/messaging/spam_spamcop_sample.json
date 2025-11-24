@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example Anti-Spam Service",
     "contact": "reports@antispam-service.example",
-    "type": "automated"
+    "domain": "antispam-service.example"
   },
   "source_identifier": "192.168.1.100",
   "source_port": 25,
@@ -30,5 +30,10 @@
   "_internal": {
     "batch_id": "20240115_001",
     "processed": "2024-01-15T14:30:25Z"
+  },
+  "sender": {
+    "org": "Example Anti-Spam Service",
+    "contact": "reports@antispam-service.example",
+    "domain": "antispam-service.example"
   }
 }

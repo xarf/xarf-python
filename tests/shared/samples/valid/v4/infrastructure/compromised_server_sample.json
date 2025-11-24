@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Server Security Monitor",
     "contact": "incidents@serversec.org",
-    "type": "automated"
+    "domain": "serversec.org"
   },
   "source_identifier": "203.0.113.150",
   "source_port": 80,
@@ -56,5 +56,10 @@
       "incident_classification": "security_breach",
       "containment_required": true
     }
+  },
+  "sender": {
+    "org": "Server Security Monitor",
+    "contact": "incidents@serversec.org",
+    "domain": "serversec.org"
   }
 }

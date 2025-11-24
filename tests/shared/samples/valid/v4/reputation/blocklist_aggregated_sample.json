@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Threat Intelligence Consortium",
     "contact": "intel@threatconsortium.org",
-    "type": "automated"
+    "domain": "threatconsortium.org"
   },
   "source_identifier": "203.0.113.200",
   "category": "reputation",
@@ -54,5 +54,10 @@
       "automated_sharing": true,
       "intel_classification": "tlp_amber"
     }
+  },
+  "sender": {
+    "org": "Threat Intelligence Consortium",
+    "contact": "intel@threatconsortium.org",
+    "domain": "threatconsortium.org"
   }
 }

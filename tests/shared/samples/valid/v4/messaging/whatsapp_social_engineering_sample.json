@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Mobile Security Research",
     "contact": "whatsapp-abuse@mobile-security.org",
-    "type": "manual"
+    "domain": "mobile-security.org"
   },
   "source_identifier": "+447955527026",
   "category": "messaging",
@@ -44,5 +44,10 @@
     "phone_verification": "unverified_uk_number",
     "social_graph_analysis": "no_mutual_contacts",
     "response_action": "blocked_and_reported_to_whatsapp"
+  },
+  "sender": {
+    "org": "Mobile Security Research",
+    "contact": "whatsapp-abuse@mobile-security.org",
+    "domain": "mobile-security.org"
   }
 }

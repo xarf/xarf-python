@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Brand Protection Agency",
     "contact": "trademark@brandprotection.legal",
-    "type": "manual"
+    "domain": "brandprotection.legal"
   },
   "source_identifier": "192.0.2.220",
   "category": "copyright",
@@ -64,5 +64,10 @@
       "legal_action_status": "cease_desist_sent",
       "brand_damage_assessment": "moderate"
     }
+  },
+  "sender": {
+    "org": "Brand Protection Agency",
+    "contact": "trademark@brandprotection.legal",
+    "domain": "brandprotection.legal"
   }
 }

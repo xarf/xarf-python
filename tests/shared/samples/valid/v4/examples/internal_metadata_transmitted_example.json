@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example Anti-Spam Service",
     "contact": "reports@antispam-service.example",
-    "type": "automated"
+    "domain": "antispam-service.example"
   },
   "source_identifier": "203.0.113.88",
   "source_port": 25,
@@ -26,5 +26,10 @@
     "spam:phishing",
     "target:banking",
     "language:english"
-  ]
+  ],
+  "sender": {
+    "org": "Example Anti-Spam Service",
+    "contact": "reports@antispam-service.example",
+    "domain": "antispam-service.example"
+  }
 }

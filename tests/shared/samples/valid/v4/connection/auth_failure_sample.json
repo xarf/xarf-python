@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Authentication Monitor",
     "contact": "auth-failures@secmonitor.net",
-    "type": "automated"
+    "domain": "secmonitor.net"
   },
   "source_identifier": "172.16.0.99",
   "source_port": 3389,
@@ -62,5 +62,10 @@
       "incident_escalated": false,
       "remediation_applied": "ip_block"
     }
+  },
+  "sender": {
+    "org": "Authentication Monitor",
+    "contact": "auth-failures@secmonitor.net",
+    "domain": "secmonitor.net"
   }
 }

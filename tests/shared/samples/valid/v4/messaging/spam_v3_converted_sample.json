@@ -6,7 +6,7 @@
   "reporter": {
     "org": "Legacy Spam Reporter",
     "contact": "abuse@legacy-reporter.com",
-    "type": "unknown"
+    "domain": "legacy-reporter.com"
   },
   "source_identifier": "203.0.113.75",
   "source_port": 25,
@@ -45,5 +45,10 @@
       "conversion_timestamp": "2024-01-15T12:00:00Z",
       "original_format": "xarf_v3"
     }
+  },
+  "sender": {
+    "org": "Legacy Spam Reporter",
+    "contact": "abuse@legacy-reporter.com",
+    "domain": "legacy-reporter.com"
   }
 }

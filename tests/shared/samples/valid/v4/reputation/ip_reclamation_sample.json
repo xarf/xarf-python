@@ -5,7 +5,7 @@
   "reporter": {
     "org": "IP Reputation Service",
     "contact": "reclamation@ipreputation.org",
-    "type": "manual"
+    "domain": "ipreputation.org"
   },
   "source_identifier": "203.0.113.175",
   "category": "reputation",
@@ -70,5 +70,10 @@
       "reputation_restoration_status": "approved",
       "blocklist_removal_requests": 12
     }
+  },
+  "sender": {
+    "org": "IP Reputation Service",
+    "contact": "reclamation@ipreputation.org",
+    "domain": "ipreputation.org"
   }
 }

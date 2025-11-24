@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Network Spoofing Detection",
     "contact": "spoofing@netdetect.org",
-    "type": "automated"
+    "domain": "netdetect.org"
   },
   "source_identifier": "203.0.113.66",
   "category": "connection",
@@ -54,5 +54,10 @@
       "packet_analysis_depth": "headers_only",
       "mitigation_status": "upstream_notified"
     }
+  },
+  "sender": {
+    "org": "Network Spoofing Detection",
+    "contact": "spoofing@netdetect.org",
+    "domain": "netdetect.org"
   }
 }

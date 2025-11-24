@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example CERT Organization",
     "contact": "cert@cert-org.example",
-    "type": "automated"
+    "domain": "cert-org.example"
   },
   "source_identifier": "198.51.100.25",
   "category": "infrastructure",
@@ -37,5 +37,10 @@
     ],
     "analyst": "team_alpha",
     "publication_approved": false
+  },
+  "sender": {
+    "org": "Example CERT Organization",
+    "contact": "cert@cert-org.example",
+    "domain": "cert-org.example"
   }
 }

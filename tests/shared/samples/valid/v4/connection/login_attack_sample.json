@@ -5,7 +5,7 @@
   "reporter": {
     "org": "SSH Honeypot Network",
     "contact": "honeypot@sshsecurity.org",
-    "type": "automated"
+    "domain": "sshsecurity.org"
   },
   "source_identifier": "198.51.100.77",
   "source_port": 45621,
@@ -66,5 +66,10 @@
       "compromise_attempts": "unsuccessful",
       "honeypot_engagement_level": "high"
     }
+  },
+  "sender": {
+    "org": "SSH Honeypot Network",
+    "contact": "honeypot@sshsecurity.org",
+    "domain": "sshsecurity.org"
   }
 }
