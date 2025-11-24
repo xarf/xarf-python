@@ -16,10 +16,10 @@ This library is currently in **alpha** development (v4.0.0-alpha). It supports t
 - ✅ **messaging** - Email spam, phishing, social engineering
 - ✅ **connection** - DDoS, port scans, login attacks, brute force
 - ✅ **content** - Phishing sites, malware distribution, defacement, fraud
-- 🚧 **infrastructure** - Compromised systems, botnets (coming soon)
-- 🚧 **copyright** - DMCA, P2P, cyberlockers (coming soon)
-- 🚧 **vulnerability** - CVE reports, misconfigurations (coming soon)
-- 🚧 **reputation** - Threat intelligence, blocklists (coming soon)
+- ✅ **infrastructure** - Compromised systems, botnets
+- ✅ **copyright** - DMCA, P2P, cyberlockers
+- ✅ **vulnerability** - CVE reports, misconfigurations
+- ✅ **reputation** - Threat intelligence, blocklists
 
 ---
 
@@ -176,7 +176,7 @@ validation_result = validate_xarf_report(
 - ✅ **Validation**: JSON Schema validation with category-specific rules
 - ✅ **Generation**: Create XARF v4 reports programmatically
 - ✅ **Evidence Handling**: Support for text, images, and binary evidence
-- ✅ **Category Support**: messaging, connection, content
+- ✅ **Category Support**: All 7 categories (messaging, connection, content, infrastructure, copyright, vulnerability, reputation)
 - ✅ **Reporter Info**: Including `on_behalf_of` for infrastructure providers
 - ✅ **XARF v3 Compatibility**: Automatic conversion with deprecation warnings
 - ✅ **Pydantic V2**: Modern validation with full type safety
@@ -184,12 +184,11 @@ validation_result = validate_xarf_report(
 
 ### Planned (Beta)
 
-- 🚧 Complete category coverage (all 7 categories)
-- 🚧 Advanced validation rules (business logic)
-- 🚧 Evidence compression support
-- 🚧 Bulk processing utilities
-- 🚧 Performance optimizations
-- 🚧 CLI tools for validation and conversion
+- ⏳ Advanced validation rules (business logic)
+- ⏳ Evidence compression support
+- ⏳ Bulk processing utilities
+- ⏳ Performance optimizations
+- ⏳ CLI tools for validation and conversion
 
 ### Future
 
@@ -483,8 +482,10 @@ MIT License - See [LICENSE](LICENSE) for details.
 
 - **[xarf-spec](https://github.com/xarf/xarf-spec)** - XARF v4 specification and JSON schemas
 - **[xarf.org](https://xarf.org)** - Official XARF website and documentation
-- **xarf-parser-js** (coming soon) - JavaScript/TypeScript parser
-- **xarf-parser-go** (coming soon) - Go implementation
+- **[xarf-javascript](https://github.com/xarf/xarf-javascript)** - JavaScript/TypeScript parser
+- **[xarf-go](https://github.com/xarf/xarf-go)** - Go implementation
+- **[xarf-java](https://github.com/xarf/xarf-java)** - Java implementation
+- **[xarf-csharp](https://github.com/xarf/xarf-csharp)** - C# implementation
 
 ## 📈 Versioning
 
