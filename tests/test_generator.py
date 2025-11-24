@@ -3,11 +3,7 @@
 import uuid
 from datetime import datetime, timezone
 
-
-from xarf.models import (
-    MessagingReport,
-    XARFReporter,
-)
+from xarf.models import MessagingReport, XARFReporter
 
 
 class TestReportGeneration:

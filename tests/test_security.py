@@ -4,7 +4,6 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-
 from xarf import XARFParser
 
 

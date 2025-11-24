@@ -3,7 +3,6 @@
 import json
 import warnings
 
-
 from xarf import XARFParser, convert_v3_to_v4, is_v3_report
 from xarf.models import ConnectionReport, ContentReport, MessagingReport
 from xarf.v3_compat import XARFv3DeprecationWarning
