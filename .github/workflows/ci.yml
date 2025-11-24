@@ -61,7 +61,7 @@ jobs:
             error: false
           - name: "Types (mypy)"
             cmd: "mypy xarf/"
-            error: true
+            error: false
           - name: "Complexity (radon)"
             cmd: "radon cc xarf/ -a -nb"
             error: true

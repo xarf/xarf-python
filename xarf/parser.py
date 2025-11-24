@@ -186,11 +186,11 @@ class XARFParser:
         report_type = data.get("type")
 
         if report_category == "messaging":
-            return self.validate_messaging(data, report_type)
+            return self.validate_messaging(data, report_type or "")
         elif report_category == "connection":
-            return self.validate_connection(data, report_type)
+            return self.validate_connection(data, report_type or "")
         elif report_category == "content":
-            return self.validate_content(data, report_type)
+            return self.validate_content(data, report_type or "")
 
         return True
 
