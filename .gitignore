@@ -78,5 +78,11 @@ Thumbs.db
 
 # Temporary files
 *.tmp
+
+# AI Tool Coordination (auto-generated, do not commit)
+.claude/
 .claude-flow/
 .swarm/
+.aider/
+.cursor/
+.copilot/
