@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  version-checks:
     name: Python ${{ matrix.python-version }} Tests
     runs-on: ubuntu-latest
     strategy:
