@@ -40,9 +40,40 @@ jobs:
         with:
           fail_ci_if_error: false
 
-  lint:
-    name: Code Quality
+  quality:
+    name: ${{ matrix.check.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check:
+          - name: "Format (black)"
+            cmd: "black --check ."
+            error: false
+          - name: "Imports (isort)"
+            cmd: "isort --check-only --profile black ."
+            error: false
+          - name: "Linting (flake8)"
+            cmd: "flake8 xarf/ tests/"
+            error: false
+          - name: "Security (bandit)"
+            cmd: "bandit -r xarf/ -ll"
+            error: false
+          - name: "Types (mypy)"
+            cmd: "mypy xarf/"
+            error: true
+          - name: "Complexity (radon)"
+            cmd: "radon cc xarf/ -a -nb"
+            error: true
+          - name: "Maintainability (radon)"
+            cmd: "radon mi xarf/ -nb"
+            error: true
+          - name: "Docstrings (pydocstyle)"
+            cmd: "pydocstyle xarf/"
+            error: true
+          - name: "Dead code (vulture)"
+            cmd: "vulture xarf/ --min-confidence 80"
+            error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -58,34 +89,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev,test]"
 
-      - name: 1. Format check (black)
-        run: black --check .
-
-      - name: 2. Import sorting (isort)
-        run: isort --check-only --profile black .
-
-      - name: 3. Linting (flake8)
-        run: flake8 xarf/ tests/
-
-      - name: 4. Code complexity (radon)
-        run: radon cc xarf/ -a -nb
-        continue-on-error: true
-
-      - name: 5. Maintainability index (radon)
-        run: radon mi xarf/ -nb
-        continue-on-error: true
-
-      - name: 6. Type checking (mypy)
-        run: mypy xarf/
-        continue-on-error: true
-
-      - name: 7. Security scanning (bandit)
-        run: bandit -r xarf/ -ll
-
-      - name: 8. Docstring coverage (pydocstyle)
-        run: pydocstyle xarf/
-        continue-on-error: true
-
-      - name: 9. Unused code detection (vulture)
-        run: vulture xarf/ --min-confidence 80
-        continue-on-error: true
+      - name: Run ${{ matrix.check.name }}
+        run: ${{ matrix.check.cmd }}
+        continue-on-error: ${{ matrix.check.error }}
