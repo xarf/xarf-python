@@ -1,9 +1,11 @@
 # XARF v4 Python Parser
 
 [![CI](https://github.com/xarf/xarf-python/actions/workflows/ci.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/xarf/xarf-python/actions/workflows/codeql.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/codeql.yml)
 [![PyPI version](https://badge.fury.io/py/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![Python versions](https://img.shields.io/pypi/pyversions/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-blue.svg)](SECURITY.md)
 
 A Python library for parsing, validating, and generating XARF v4 (eXtended Abuse Reporting Format) reports.
 
@@ -163,7 +165,7 @@ from xarf.validation import validate_xarf_report
 
 # Schema URLs reference the spec repository
 validation_result = validate_xarf_report(
-    report_json, 
+    report_json,
     schema_url="https://raw.githubusercontent.com/xarf/xarf-spec/main/schemas/v4/xarf-v4-master.json"
 )
 ```
@@ -470,7 +472,7 @@ This project uses two GitHub Actions workflows:
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 - **Bug Reports**: Use GitHub Issues
-- **Feature Requests**: Discuss in GitHub Discussions  
+- **Feature Requests**: Discuss in GitHub Discussions
 - **Pull Requests**: Follow our coding standards
 - **Testing**: Add tests for new features
 
@@ -492,7 +494,7 @@ MIT License - See [LICENSE](LICENSE) for details.
 This project follows semantic versioning with alpha/beta releases:
 
 - `4.0.0a1`, `4.0.0a2` - Alpha releases (current)
-- `4.0.0b1`, `4.0.0b2` - Beta releases (planned)  
+- `4.0.0b1`, `4.0.0b2` - Beta releases (planned)
 - `4.0.0` - Stable release (Q2 2024)
 
 ## 🎯 Roadmap
