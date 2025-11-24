@@ -1,0 +1,34 @@
+{
+  "xarf_version": "4.0.0",
+  "report_id": "550e8400-e29b-41d4-a716-446655440002",
+  "timestamp": "2024-11-24T14:35:00Z",
+  "reporter": {
+    "org": "Security Research Lab",
+    "contact": "research@seclab.org",
+    "domain": "seclab.org"
+  },
+  "sender": {
+    "org": "ISP Network Operations",
+    "contact": "noc@isp.net",
+    "domain": "isp.net"
+  },
+  "source_identifier": "192.0.2.150",
+  "category": "content",
+  "type": "phishing_site",
+  "evidence_source": "researcher_analysis",
+  "url": "http://phishing-example.bad",
+  "content_type": "text/html",
+  "description": "Example report where reporter and sender are different organizations - researcher reporting on behalf of ISP",
+  "tags": [
+    "phishing",
+    "credential_theft",
+    "researcher_analysis"
+  ],
+  "evidence": [
+    {
+      "content_type": "text/plain",
+      "description": "Screenshot of phishing page",
+      "payload": "UGhpc2hpbmcgcGFnZSBzY3JlZW5zaG90IGRhdGE="
+    }
+  ]
+}

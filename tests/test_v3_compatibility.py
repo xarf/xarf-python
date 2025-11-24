@@ -87,7 +87,7 @@ class TestV3Conversion:
         # Verify reporter
         assert v4_report["reporter"]["org"] == "Example Anti-Spam"
         assert v4_report["reporter"]["contact"] == "abuse@example.com"
-        assert v4_report["reporter"]["type"] == "automated"
+        assert v4_report["reporter"]["domain"]  # Domain should be present
 
         # Verify messaging-specific fields
         assert v4_report["protocol"] == "smtp"

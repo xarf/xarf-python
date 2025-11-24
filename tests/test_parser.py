@@ -20,7 +20,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test Org",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test Org",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.100",
             "category": "messaging",
@@ -48,7 +53,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Security Monitor",
                 "contact": "security@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Security Monitor",
+                "contact": "security@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.200",
             "category": "connection",
@@ -77,7 +87,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Web Security",
                 "contact": "web@example.com",
-                "type": "manual",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Web Security",
+                "contact": "web@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.300",
             "category": "content",
@@ -103,7 +118,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -126,7 +146,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -170,7 +195,12 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "vulnerability",  # Not supported in alpha
@@ -201,8 +231,8 @@ class TestXARFParser:
         errors = parser.get_errors()
         assert any("Missing required fields" in error for error in errors)
 
-    def test_invalid_reporter_type(self):
-        """Test invalid reporter type validation."""
+    def test_missing_sender(self):
+        """Test validation fails without sender field."""
         invalid_data = {
             "xarf_version": "4.0.0",
             "report_id": "test-id",
@@ -210,8 +240,9 @@ class TestXARFParser:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "invalid_type",  # Invalid
+                "domain": "example.com",
             },
+            # Missing sender
             "source_identifier": "192.0.2.1",
             "category": "messaging",
             "type": "spam",
@@ -223,4 +254,62 @@ class TestXARFParser:
 
         assert result is False
         errors = parser.get_errors()
-        assert any("Invalid reporter type" in error for error in errors)
+        assert any("sender" in error.lower() for error in errors)
+
+    def test_reporter_sender_same_org(self):
+        """Test report where reporter and sender are the same."""
+        report_data = {
+            "xarf_version": "4.0.0",
+            "report_id": "test-same-org",
+            "timestamp": "2024-01-15T10:30:00Z",
+            "reporter": {
+                "org": "Same Org",
+                "contact": "abuse@same.com",
+                "domain": "same.com",
+            },
+            "sender": {
+                "org": "Same Org",
+                "contact": "abuse@same.com",
+                "domain": "same.com",
+            },
+            "source_identifier": "192.0.2.1",
+            "category": "messaging",
+            "type": "spam",
+            "evidence_source": "spamtrap",
+        }
+
+        parser = XARFParser()
+        report = parser.parse(report_data)
+
+        assert report.reporter.org == "Same Org"
+        assert report.sender.org == "Same Org"
+        assert report.reporter.org == report.sender.org
+
+    def test_reporter_sender_different_orgs(self):
+        """Test report where reporter and sender are different organizations."""
+        report_data = {
+            "xarf_version": "4.0.0",
+            "report_id": "test-diff-org",
+            "timestamp": "2024-01-15T10:30:00Z",
+            "reporter": {
+                "org": "Reporter Org",
+                "contact": "abuse@reporter.com",
+                "domain": "reporter.com",
+            },
+            "sender": {
+                "org": "Sender Org",
+                "contact": "abuse@sender.com",
+                "domain": "sender.com",
+            },
+            "source_identifier": "192.0.2.1",
+            "category": "messaging",
+            "type": "spam",
+            "evidence_source": "spamtrap",
+        }
+
+        parser = XARFParser()
+        report = parser.parse(report_data)
+
+        assert report.reporter.org == "Reporter Org"
+        assert report.sender.org == "Sender Org"
+        assert report.reporter.org != report.sender.org

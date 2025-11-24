@@ -19,7 +19,12 @@ class TestUUIDGeneration:
             "reporter": {
                 "org": "Test Org",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test Org",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -87,7 +92,12 @@ class TestUUIDGeneration:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -114,7 +124,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -135,7 +150,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -156,7 +176,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -188,7 +213,12 @@ class TestTimestampFormatting:
                 "reporter": {
                     "org": "Test",
                     "contact": "test@example.com",
-                    "type": "automated",
+                    "domain": "example.com",
+                },
+                "sender": {
+                    "org": "Test",
+                    "contact": "test@example.com",
+                    "domain": "example.com",
                 },
                 "source_identifier": "192.0.2.1",
                 "category": "messaging",
@@ -220,7 +250,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -252,7 +287,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -277,7 +317,12 @@ class TestTimestampFormatting:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -314,7 +359,12 @@ class TestSecurityEdgeCases:
                 "reporter": {
                     "org": "Test",
                     "contact": "test@example.com",
-                    "type": "automated",
+                    "domain": "example.com",
+                },
+                "sender": {
+                    "org": "Test",
+                    "contact": "test@example.com",
+                    "domain": "example.com",
                 },
                 "source_identifier": "192.0.2.1",
                 "category": "messaging",
@@ -338,7 +388,12 @@ class TestSecurityEdgeCases:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -360,7 +415,12 @@ class TestSecurityEdgeCases:
             "reporter": {
                 "org": "Test\x00Org",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test\x00Org",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",

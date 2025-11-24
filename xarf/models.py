@@ -6,8 +6,16 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
+class ContactInfo(BaseModel):
+    """XARF Contact Information for reporter and sender."""
+
+    org: str
+    contact: str
+    domain: str
+
+
 class XARFReporter(BaseModel):
-    """XARF Reporter information."""
+    """XARF Reporter information (deprecated, use ContactInfo)."""
 
     org: str
     contact: str
@@ -29,8 +37,8 @@ class XARFReport(BaseModel):
     xarf_version: str = Field(..., pattern="^4\\.0\\.0$")
     report_id: str
     timestamp: datetime
-    reporter: XARFReporter
-    on_behalf_of: Optional[XARFReporter] = None
+    reporter: ContactInfo
+    sender: ContactInfo
     source_identifier: str
     category: str = Field(..., alias="category")
     type: str

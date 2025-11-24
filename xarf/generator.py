@@ -246,11 +246,13 @@ class XARFGenerator:
         category: str,
         report_type: str,
         source_identifier: str,
+        reporter_org: str,
         reporter_contact: str,
-        reporter_org: Optional[str] = None,
-        reporter_type: str = "automated",
+        reporter_domain: str,
+        sender_org: str,
+        sender_contact: str,
+        sender_domain: str,
         evidence_source: str = "automated_scan",
-        on_behalf_of: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         evidence: Optional[List[Dict[str, str]]] = None,
         severity: Optional[str] = None,
@@ -266,12 +268,13 @@ class XARFGenerator:
             category: Report category (e.g., "connection", "content").
             report_type: Specific type within category (e.g., "ddos", "phishing").
             source_identifier: Source IP address or identifier.
+            reporter_org: Organization name of the reporter.
             reporter_contact: Contact email for the reporter.
-            reporter_org: Organization name of the reporter (optional).
-            reporter_type: Type of reporter (default: "automated").
+            reporter_domain: Domain of the reporter organization.
+            sender_org: Organization name of the sender.
+            sender_contact: Contact email for the sender.
+            sender_domain: Domain of the sender organization.
             evidence_source: How the evidence was collected (default: "automated_scan").
-            on_behalf_of: Dictionary with "org" and optional "contact" keys for
-                         reporting on behalf of another entity.
             description: Human-readable description of the incident.
             evidence: List of evidence items (dictionaries with content_type,
                      description, payload, and hash).
@@ -294,8 +297,12 @@ class XARFGenerator:
             ...     category="connection",
             ...     report_type="ddos",
             ...     source_identifier="192.0.2.100",
-            ...     reporter_contact="abuse@example.com",
             ...     reporter_org="Example Security",
+            ...     reporter_contact="abuse@example.com",
+            ...     reporter_domain="example.com",
+            ...     sender_org="Example Security",
+            ...     sender_contact="abuse@example.com",
+            ...     sender_domain="example.com",
             ...     severity="high"
             ... )
             >>> report["xarf_version"]
@@ -304,8 +311,18 @@ class XARFGenerator:
         # Validate required parameters
         if not source_identifier:
             raise XARFError("source_identifier is required")
+        if not reporter_org:
+            raise XARFError("reporter_org is required")
         if not reporter_contact:
             raise XARFError("reporter_contact is required")
+        if not reporter_domain:
+            raise XARFError("reporter_domain is required")
+        if not sender_org:
+            raise XARFError("sender_org is required")
+        if not sender_contact:
+            raise XARFError("sender_contact is required")
+        if not sender_domain:
+            raise XARFError("sender_domain is required")
 
         # Validate category
         if category not in self.VALID_CATEGORIES:
@@ -320,13 +337,6 @@ class XARFGenerator:
             raise XARFError(
                 f"Invalid type '{report_type}' for category '{category}'. "
                 f"Must be one of: {', '.join(valid_types)}"
-            )
-
-        # Validate reporter_type
-        if reporter_type not in self.VALID_REPORTER_TYPES:
-            raise XARFError(
-                f"Invalid reporter_type '{reporter_type}'. Must be one of: "
-                f"{', '.join(sorted(self.VALID_REPORTER_TYPES))}"
             )
 
         # Validate evidence_source
@@ -352,22 +362,21 @@ class XARFGenerator:
             "xarf_version": self.XARF_VERSION,
             "report_id": self.generate_uuid(),
             "timestamp": self.generate_timestamp(),
-            "reporter": {"contact": reporter_contact, "type": reporter_type},
+            "reporter": {
+                "org": reporter_org,
+                "contact": reporter_contact,
+                "domain": reporter_domain,
+            },
+            "sender": {
+                "org": sender_org,
+                "contact": sender_contact,
+                "domain": sender_domain,
+            },
             "source_identifier": source_identifier,
             "category": category,
             "type": report_type,
             "evidence_source": evidence_source,
         }
-
-        # Add optional reporter fields
-        if reporter_org:
-            report["reporter"]["org"] = reporter_org
-
-        # Add on_behalf_of if provided
-        if on_behalf_of:
-            if "org" not in on_behalf_of:
-                raise XARFError("on_behalf_of must contain 'org' key")
-            report["reporter"]["on_behalf_of"] = on_behalf_of
 
         # Add optional fields
         if description:
@@ -484,15 +493,25 @@ class XARFGenerator:
         reporter_org = secrets.choice(sample_orgs)
 
         sample_domains = ["example.com", "security.net", "abuse.org", "soc.io"]
-        reporter_contact = f"abuse@{secrets.choice(sample_domains)}"
+        reporter_domain = secrets.choice(sample_domains)
+        reporter_contact = f"abuse@{reporter_domain}"
+
+        # For sample reports, sender can be the same as reporter
+        sender_org = reporter_org
+        sender_domain = reporter_domain
+        sender_contact = reporter_contact
 
         # Build report parameters
         params: Dict[str, Any] = {
             "category": category,
             "report_type": report_type,
             "source_identifier": source_ip,
-            "reporter_contact": reporter_contact,
             "reporter_org": reporter_org,
+            "reporter_contact": reporter_contact,
+            "reporter_domain": reporter_domain,
+            "sender_org": sender_org,
+            "sender_contact": sender_contact,
+            "sender_domain": sender_domain,
             "description": f"Sample {report_type} report for testing",
         }
 

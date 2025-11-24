@@ -15,7 +15,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Email Provider",
                 "contact": "abuse@emailprovider.com",
-                "type": "automated",
+                "domain": "emailprovider.com",
+            },
+            "sender": {
+                "org": "Email Provider",
+                "contact": "abuse@emailprovider.com",
+                "domain": "emailprovider.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -37,7 +42,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Network Monitor",
                 "contact": "security@network.com",
-                "type": "automated",
+                "domain": "network.com",
+            },
+            "sender": {
+                "org": "Network Monitor",
+                "contact": "security@network.com",
+                "domain": "network.com",
             },
             "source_identifier": "192.0.2.2",
             "category": "connection",
@@ -61,7 +71,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Web Security",
                 "contact": "security@websec.com",
-                "type": "manual",
+                "domain": "websec.com",
+            },
+            "sender": {
+                "org": "Web Security",
+                "contact": "security@websec.com",
+                "domain": "websec.com",
             },
             "source_identifier": "192.0.2.3",
             "category": "content",
@@ -84,7 +99,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Security Research",
                 "contact": "research@security.com",
-                "type": "automated",
+                "domain": "security.com",
+            },
+            "sender": {
+                "org": "Security Research",
+                "contact": "research@security.com",
+                "domain": "security.com",
             },
             "source_identifier": "192.0.2.4",
             "category": "infrastructure",
@@ -108,7 +128,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Copyright Holder",
                 "contact": "legal@copyright.com",
-                "type": "manual",
+                "domain": "copyright.com",
+            },
+            "sender": {
+                "org": "Copyright Holder",
+                "contact": "legal@copyright.com",
+                "domain": "copyright.com",
             },
             "source_identifier": "192.0.2.5",
             "category": "copyright",
@@ -129,7 +154,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Vulnerability Scanner",
                 "contact": "vuln@scanner.com",
-                "type": "automated",
+                "domain": "scanner.com",
+            },
+            "sender": {
+                "org": "Vulnerability Scanner",
+                "contact": "vuln@scanner.com",
+                "domain": "scanner.com",
             },
             "source_identifier": "192.0.2.6",
             "category": "vulnerability",
@@ -150,7 +180,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Reputation Service",
                 "contact": "rep@service.com",
-                "type": "automated",
+                "domain": "service.com",
+            },
+            "sender": {
+                "org": "Reputation Service",
+                "contact": "rep@service.com",
+                "domain": "service.com",
             },
             "source_identifier": "192.0.2.7",
             "category": "reputation",
@@ -171,7 +206,12 @@ class TestCategoryValidation:
             "reporter": {
                 "org": "Other Reporter",
                 "contact": "other@reporter.com",
-                "type": "manual",
+                "domain": "reporter.com",
+            },
+            "sender": {
+                "org": "Other Reporter",
+                "contact": "other@reporter.com",
+                "domain": "reporter.com",
             },
             "source_identifier": "192.0.2.8",
             "category": "other",
@@ -196,7 +236,12 @@ class TestMandatoryFields:
             "reporter": {
                 "org": "Test Organization",
                 "contact": "abuse@test.com",
-                "type": "automated",
+                "domain": "test.com",
+            },
+            "sender": {
+                "org": "Test Organization",
+                "contact": "abuse@test.com",
+                "domain": "test.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -332,27 +377,29 @@ class TestMandatoryFields:
 
         assert result is False
 
-    def test_missing_reporter_type(self):
-        """Test validation fails without reporter.type."""
+    def test_missing_reporter_domain(self):
+        """Test validation fails without reporter.domain."""
         report_data = self.get_valid_base_report()
-        del report_data["reporter"]["type"]
-
-        parser = XARFParser(strict=False)
-        result = parser.validate(report_data)
-
-        assert result is False
-
-    def test_invalid_reporter_type(self):
-        """Test validation fails with invalid reporter.type."""
-        report_data = self.get_valid_base_report()
-        report_data["reporter"]["type"] = "invalid"
+        del report_data["reporter"]["domain"]
 
         parser = XARFParser(strict=False)
         result = parser.validate(report_data)
 
         assert result is False
         errors = parser.get_errors()
-        assert any("Invalid reporter type" in error for error in errors)
+        assert any("Missing reporter fields" in error for error in errors)
+
+    def test_missing_sender_domain(self):
+        """Test validation fails without sender.domain."""
+        report_data = self.get_valid_base_report()
+        del report_data["sender"]["domain"]
+
+        parser = XARFParser(strict=False)
+        result = parser.validate(report_data)
+
+        assert result is False
+        errors = parser.get_errors()
+        assert any("Missing sender fields" in error for error in errors)
 
 
 class TestCategorySpecificFields:
@@ -367,7 +414,12 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "messaging",
@@ -393,7 +445,12 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "automated",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "connection",
@@ -418,7 +475,12 @@ class TestCategorySpecificFields:
             "reporter": {
                 "org": "Test",
                 "contact": "test@example.com",
-                "type": "manual",
+                "domain": "example.com",
+            },
+            "sender": {
+                "org": "Test",
+                "contact": "test@example.com",
+                "domain": "example.com",
             },
             "source_identifier": "192.0.2.1",
             "category": "content",
