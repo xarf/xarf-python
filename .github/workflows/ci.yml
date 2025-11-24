@@ -67,3 +67,7 @@ jobs:
       - name: Run mypy
         run: mypy xarf/
         continue-on-error: true
+
+      - name: Run bandit security check
+        run: bandit -r xarf/ -ll
+        continue-on-error: true

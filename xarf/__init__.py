@@ -1,6 +1,7 @@
 """XARF v4 Python Parser.
 
-A Python library for parsing and validating XARF v4 (eXtended Abuse Reporting Format) reports.
+A Python library for parsing and validating XARF v4
+(eXtended Abuse Reporting Format) reports.
 Includes backwards compatibility with XARF v3.
 """
 

@@ -69,7 +69,10 @@ class XARFParser:
         report_category = data.get("category")
 
         if report_category not in self.supported_categories:
-            error_msg = f"Unsupported category '{report_category}' in alpha version. Supported: {self.supported_categories}"
+            error_msg = (
+                f"Unsupported category '{report_category}' in alpha "
+                f"version. Supported: {self.supported_categories}"
+            )
             if self.strict:
                 raise XARFValidationError(error_msg)
             else:
