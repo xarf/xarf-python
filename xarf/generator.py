@@ -191,9 +191,9 @@ class XARFGenerator:
         elif algorithm == "sha512":
             return hashlib.sha512(data).hexdigest()
         elif algorithm == "sha1":
-            return hashlib.sha1(data).hexdigest()
+            return hashlib.sha1(data).hexdigest()  # nosec B324 - file hashing, not security
         elif algorithm == "md5":
-            return hashlib.md5(data).hexdigest()
+            return hashlib.md5(data).hexdigest()  # nosec B324 - file hashing, not security
         else:
             raise XARFError(f"Unsupported hash algorithm: {algorithm}")
 

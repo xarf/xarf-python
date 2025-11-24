@@ -88,7 +88,7 @@ def convert_v3_to_v4(v3_data: Dict[str, Any]) -> Dict[str, Any]:
             ),
             "type": "automated",  # v3 didn't distinguish, assume automated
         },
-        "source_identifier": source.get("IP", "0.0.0.0"),
+        "source_identifier": source.get("IP", "0.0.0.0"),  # nosec B104 - fallback default
         "category": category,
         "type": report_type,
         "evidence_source": _map_evidence_source(
@@ -184,7 +184,7 @@ def _add_connection_fields(
     additional_info = v3_report.get("AdditionalInfo", {})
 
     # Required fields
-    v4_data["destination_ip"] = v3_report.get("DestinationIp", "0.0.0.0")
+    v4_data["destination_ip"] = v3_report.get("DestinationIp", "0.0.0.0")  # nosec B104 - fallback default
     v4_data["protocol"] = additional_info.get("Protocol", "tcp")
 
     # Optional fields
