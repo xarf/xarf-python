@@ -179,7 +179,7 @@ validation_result = validate_xarf_report(
 - ✅ **Generation**: Create XARF v4 reports programmatically
 - ✅ **Evidence Handling**: Support for text, images, and binary evidence
 - ✅ **Category Support**: All 7 categories (messaging, connection, content, infrastructure, copyright, vulnerability, reputation)
-- ✅ **Reporter Info**: Including `on_behalf_of` for infrastructure providers
+- ✅ **Reporter/Sender**: Separate reporter and sender fields for third-party reporting
 - ✅ **XARF v3 Compatibility**: Automatic conversion with deprecation warnings
 - ✅ **Pydantic V2**: Modern validation with full type safety
 - ✅ **Python 3.8-3.12**: Full compatibility
@@ -233,7 +233,12 @@ spam_report = {
     "reporter": {
         "org": "Spam Detection Service",
         "contact": "noreply@spamdetect.example",
-        "type": "automated"
+        "domain": "spamdetect.example"
+    },
+    "sender": {
+        "org": "Spam Detection Service",
+        "contact": "noreply@spamdetect.example",
+        "domain": "spamdetect.example"
     },
     "source_identifier": "192.0.2.100",
     "category": "messaging",
@@ -282,30 +287,53 @@ print(f"Attack lasted {ddos_report.duration_minutes} minutes")
 print(f"Total packets: {ddos_report.packet_count}")
 ```
 
-### Using `on_behalf_of` for Infrastructure Providers
+### Reporter vs Sender: Third-Party Reporting
 
+XARF v4 uses separate `reporter` and `sender` fields to distinguish between who created the report and who sent it.
+
+**Direct Reporting** (reporter = sender):
 ```python
 from xarf.generator import XARFGenerator
 
 generator = XARFGenerator()
 
-# Infrastructure provider (Abusix) sending report for client (Swisscom)
+# Organization reporting abuse they directly observed
 report = generator.create_report(
     category="messaging",
     report_type="spam",
     source_identifier="192.0.2.150",
-    reporter_org="Abusix",
-    reporter_contact="reports@abusix.com",
-    on_behalf_of={
-        "org": "Swisscom",
-        "contact": "abuse@swisscom.ch"
-    },
-    description="Spam detected by Swisscom's infrastructure"
+    reporter_org="Security Team",
+    reporter_contact="abuse@example.com",
+    reporter_domain="example.com",
+    sender_org="Security Team",
+    sender_contact="abuse@example.com",
+    sender_domain="example.com",
+    description="Spam detected in our infrastructure"
 )
 
-# The report clearly shows Abusix is reporting on behalf of Swisscom
 print(f"Reporter: {report.reporter.org}")
-print(f"On behalf of: {report.reporter.on_behalf_of.org}")
+print(f"Sender: {report.sender.org}")
+```
+
+**Third-Party Reporting** (reporter ≠ sender):
+```python
+# Infrastructure provider (Abusix) sending report on behalf of client (Swisscom)
+report = generator.create_report(
+    category="messaging",
+    report_type="spam",
+    source_identifier="192.0.2.150",
+    reporter_org="Swisscom",
+    reporter_contact="abuse@swisscom.ch",
+    reporter_domain="swisscom.ch",
+    sender_org="Abusix",
+    sender_contact="reports@abusix.com",
+    sender_domain="abusix.com",
+    description="Spam detected by Swisscom, transmitted by Abusix"
+)
+
+# The report clearly shows Swisscom is the reporter, Abusix is the sender
+print(f"Reporter (who detected): {report.reporter.org}")
+print(f"Sender (who transmitted): {report.sender.org}")
 ```
 
 ## 🔍 Validation
@@ -495,7 +523,7 @@ This project follows semantic versioning with alpha/beta releases:
 
 - `4.0.0a1`, `4.0.0a2` - Alpha releases (current)
 - `4.0.0b1`, `4.0.0b2` - Beta releases (planned)
-- `4.0.0` - Stable release (Q2 2024)
+- `4.0.0` - Stable release (Q1 2026)
 
 ## 🎯 Roadmap
 
@@ -505,11 +533,11 @@ This project follows semantic versioning with alpha/beta releases:
 - [x] JSON schema validation
 - [x] messaging, connection, content categories
 - [x] Generator functionality
-- [x] `on_behalf_of` support
+- [x] Reporter/sender separation for third-party reporting
 - [ ] Evidence handling improvements
 - [ ] Performance benchmarks
 
-### Beta Phase (Q1 2024)
+### Beta Phase (Q4 2025)
 
 - [ ] Complete category coverage (all 7)
 - [ ] XARF v3 compatibility layer
@@ -517,7 +545,7 @@ This project follows semantic versioning with alpha/beta releases:
 - [ ] CLI tools
 - [ ] Comprehensive documentation
 
-### Stable Release (Q2 2024)
+### Stable Release (Q1 2026)
 
 - [ ] Production-ready performance
 - [ ] >95% test coverage

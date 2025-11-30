@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Web Security Scanner",
     "contact": "alerts@webscan.security",
-    "type": "automated"
+    "domain": "webscan.security"
   },
   "source_identifier": "192.0.2.180",
   "category": "infrastructure",
@@ -55,5 +55,10 @@
       "cleanup_complexity": "moderate",
       "site_owner_notified": false
     }
+  },
+  "sender": {
+    "org": "Web Security Scanner",
+    "contact": "alerts@webscan.security",
+    "domain": "webscan.security"
   }
 }

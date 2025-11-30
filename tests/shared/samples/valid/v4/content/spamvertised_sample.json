@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Spam Analysis Center",
     "contact": "spamvertised@spamanalysis.org",
-    "type": "automated"
+    "domain": "spamanalysis.org"
   },
   "source_identifier": "198.51.100.222",
   "category": "content",
@@ -63,5 +63,10 @@
       "regulatory_violation_score": 0.96,
       "takedown_urgency": "high_priority"
     }
+  },
+  "sender": {
+    "org": "Spam Analysis Center",
+    "contact": "spamvertised@spamanalysis.org",
+    "domain": "spamanalysis.org"
   }
 }

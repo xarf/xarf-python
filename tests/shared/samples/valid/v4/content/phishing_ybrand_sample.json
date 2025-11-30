@@ -5,7 +5,7 @@
   "reporter": {
     "org": "YBrandProtection",
     "contact": "takedown@ybrandprotection.com",
-    "type": "automated"
+    "domain": "ybrandprotection.com"
   },
   "source_identifier": "203.0.113.45",
   "category": "content",
@@ -37,5 +37,10 @@
     "takedown_sent": true,
     "response_deadline": "2024-01-17T16:45:12Z",
     "escalation": "legal_team"
+  },
+  "sender": {
+    "org": "YBrandProtection",
+    "contact": "takedown@ybrandprotection.com",
+    "domain": "ybrandprotection.com"
   }
 }

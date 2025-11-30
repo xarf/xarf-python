@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Abusix",
     "contact": "abuse@abusix.com",
-    "type": "automated"
+    "domain": "abusix.com"
   },
   "source_identifier": "35.243.100.5",
   "source_port": 25,
@@ -31,5 +31,10 @@
     "malicious_link:hykwon.com",
     "severity:high"
   ],
-  "description": "Sophisticated phishing email impersonating SBI Securities (Japanese financial company), claiming account security issues and directing to malicious domain hykwon.com"
+  "description": "Sophisticated phishing email impersonating SBI Securities (Japanese financial company), claiming account security issues and directing to malicious domain hykwon.com",
+  "sender": {
+    "org": "Abusix",
+    "contact": "abuse@abusix.com",
+    "domain": "abusix.com"
+  }
 }

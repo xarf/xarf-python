@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Honeypot Research Network",
     "contact": "traps@honeypot-research.org",
-    "type": "automated"
+    "domain": "honeypot-research.org"
   },
   "source_identifier": "198.51.100.199",
   "category": "reputation",
@@ -63,5 +63,10 @@
       "threat_intelligence_value": "medium",
       "ioc_extraction_success": true
     }
+  },
+  "sender": {
+    "org": "Honeypot Research Network",
+    "contact": "traps@honeypot-research.org",
+    "domain": "honeypot-research.org"
   }
 }

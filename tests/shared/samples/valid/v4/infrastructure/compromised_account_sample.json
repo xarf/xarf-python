@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Account Security Monitor",
     "contact": "breaches@accountsec.net",
-    "type": "automated"
+    "domain": "accountsec.net"
   },
   "source_identifier": "198.51.100.88",
   "category": "infrastructure",
@@ -58,5 +58,10 @@
       "mfa_enabled": false,
       "user_notification_sent": true
     }
+  },
+  "sender": {
+    "org": "Account Security Monitor",
+    "contact": "breaches@accountsec.net",
+    "domain": "accountsec.net"
   }
 }

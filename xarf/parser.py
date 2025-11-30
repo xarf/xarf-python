@@ -129,6 +129,7 @@ class XARFParser:
             "report_id",
             "timestamp",
             "reporter",
+            "sender",
             "source_identifier",
             "category",
             "type",
@@ -152,15 +153,22 @@ class XARFParser:
             self.errors.append("Reporter must be an object")
             return False
 
-        reporter_required = {"org", "contact", "type"}
+        reporter_required = {"org", "contact", "domain"}
         missing_reporter = reporter_required - set(reporter.keys())
         if missing_reporter:
             self.errors.append(f"Missing reporter fields: {missing_reporter}")
             return False
 
-        # Validate reporter type
-        if reporter.get("type") not in ["automated", "manual", "hybrid"]:
-            self.errors.append(f"Invalid reporter type: {reporter.get('type')}")
+        # Validate sender structure
+        sender = data.get("sender", {})
+        if not isinstance(sender, dict):
+            self.errors.append("Sender must be an object")
+            return False
+
+        sender_required = {"org", "contact", "domain"}
+        missing_sender = sender_required - set(sender.keys())
+        if missing_sender:
+            self.errors.append(f"Missing sender fields: {missing_sender}")
             return False
 
         # Validate timestamp format

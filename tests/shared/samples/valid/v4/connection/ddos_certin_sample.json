@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example CERT",
     "contact": "incident@cert-example.org",
-    "type": "automated"
+    "domain": "cert-example.org"
   },
   "source_identifier": "172.16.254.10",
   "source_port": 53,
@@ -43,5 +43,10 @@
     ],
     "traffic_volume_gbps": 15.7,
     "coordinator": "duty_officer_3"
+  },
+  "sender": {
+    "org": "Example CERT",
+    "contact": "incident@cert-example.org",
+    "domain": "cert-example.org"
   }
 }

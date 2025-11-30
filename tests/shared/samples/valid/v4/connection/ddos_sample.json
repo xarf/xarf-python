@@ -5,7 +5,7 @@
   "reporter": {
     "org": "DDoS Protection Service",
     "contact": "ddos@protectionservice.net",
-    "type": "automated"
+    "domain": "protectionservice.net"
   },
   "source_identifier": "192.0.2.155",
   "source_port": 0,
@@ -56,5 +56,10 @@
       "attack_vector_diversity": 3,
       "customer_sla_breach": false
     }
+  },
+  "sender": {
+    "org": "DDoS Protection Service",
+    "contact": "ddos@protectionservice.net",
+    "domain": "protectionservice.net"
   }
 }

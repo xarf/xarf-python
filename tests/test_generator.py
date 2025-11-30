@@ -1,9 +1,9 @@
-"""Tests for XARF Report Generator (if implemented)."""
+"""Tests for XARF Report Generator."""
 
 import uuid
 from datetime import datetime, timezone
 
-from xarf.models import MessagingReport, XARFReporter
+from xarf.models import ContactInfo, MessagingReport
 
 
 class TestReportGeneration:
@@ -11,8 +11,11 @@ class TestReportGeneration:
 
     def test_create_messaging_report(self):
         """Test creating a messaging report programmatically."""
-        reporter = XARFReporter(
-            org="Test Organization", contact="abuse@test.com", type="automated"
+        reporter = ContactInfo(
+            org="Test Organization", contact="abuse@test.com", domain="test.com"
+        )
+        sender = ContactInfo(
+            org="Test Organization", contact="abuse@test.com", domain="test.com"
         )
 
         report = MessagingReport(
@@ -20,6 +23,7 @@ class TestReportGeneration:
             report_id=str(uuid.uuid4()),
             timestamp=datetime.now(timezone.utc),
             reporter=reporter,
+            sender=sender,
             source_identifier="192.0.2.1",
             category="messaging",
             type="spam",

@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Anti-Fraud Coalition",
     "contact": "fraud@antifraud.org",
-    "type": "automated"
+    "domain": "antifraud.org"
   },
   "source_identifier": "192.0.2.211",
   "category": "content",
@@ -63,5 +63,10 @@
       ],
       "investigation_priority": "urgent"
     }
+  },
+  "sender": {
+    "org": "Anti-Fraud Coalition",
+    "contact": "fraud@antifraud.org",
+    "domain": "antifraud.org"
   }
 }

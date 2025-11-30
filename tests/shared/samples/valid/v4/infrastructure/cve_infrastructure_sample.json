@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Infrastructure CVE Monitor",
     "contact": "cve-reports@infrasec.org",
-    "type": "automated"
+    "domain": "infrasec.org"
   },
   "source_identifier": "203.0.113.99",
   "source_port": 8080,
@@ -61,5 +61,10 @@
       "threat_actor_attribution": "unknown",
       "incident_response_activated": true
     }
+  },
+  "sender": {
+    "org": "Infrastructure CVE Monitor",
+    "contact": "cve-reports@infrasec.org",
+    "domain": "infrasec.org"
   }
 }

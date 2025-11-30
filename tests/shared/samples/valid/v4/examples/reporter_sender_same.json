@@ -1,0 +1,31 @@
+{
+  "xarf_version": "4.0.0",
+  "report_id": "550e8400-e29b-41d4-a716-446655440001",
+  "timestamp": "2024-11-24T14:30:00Z",
+  "reporter": {
+    "org": "Example Security Team",
+    "contact": "abuse@example.com",
+    "domain": "example.com"
+  },
+  "sender": {
+    "org": "Example Security Team",
+    "contact": "abuse@example.com",
+    "domain": "example.com"
+  },
+  "source_identifier": "192.0.2.100",
+  "category": "connection",
+  "type": "ddos",
+  "evidence_source": "automated_scan",
+  "destination_ip": "203.0.113.50",
+  "protocol": "tcp",
+  "destination_port": 443,
+  "attack_type": "syn_flood",
+  "duration_minutes": 30,
+  "packet_count": 1500000,
+  "description": "Example report where reporter and sender are the same organization",
+  "tags": [
+    "ddos",
+    "syn_flood",
+    "automated"
+  ]
+}

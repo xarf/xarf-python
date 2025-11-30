@@ -5,7 +5,7 @@
   "reporter": {
     "org": "Example Security Vendor",
     "contact": "abuse@security-vendor.example",
-    "type": "manual"
+    "domain": "security-vendor.example"
   },
   "source_identifier": "malicious-example.net",
   "category": "content",
@@ -51,5 +51,10 @@
       "ssl_certificate_suspicious": false,
       "geolocation": "unknown"
     }
+  },
+  "sender": {
+    "org": "Example Security Vendor",
+    "contact": "abuse@security-vendor.example",
+    "domain": "security-vendor.example"
   }
 }

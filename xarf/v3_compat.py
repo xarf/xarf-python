@@ -73,6 +73,18 @@ def convert_v3_to_v4(v3_data: Dict[str, Any]) -> Dict[str, Any]:
     # Map v3 ReportType to v4 type
     report_type = report.get("ReportType", "").lower()
 
+    # Extract reporter info
+    reporter_org = reporter_info.get("ReporterOrg", "Unknown")
+    reporter_contact = (
+        reporter_info.get("ReporterOrgEmail")
+        or reporter_info.get("ReporterContactEmail")
+        or "unknown@example.com"
+    )
+    # Extract domain from email if possible
+    reporter_domain = (
+        reporter_contact.split("@")[-1] if "@" in reporter_contact else "example.com"
+    )
+
     # Build base v4 structure
     v4_data: Dict[str, Any] = {
         "xarf_version": "4.0.0",
@@ -80,13 +92,14 @@ def convert_v3_to_v4(v3_data: Dict[str, Any]) -> Dict[str, Any]:
         "timestamp": report.get("Date")
         or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "reporter": {
-            "org": reporter_info.get("ReporterOrg", "Unknown"),
-            "contact": (
-                reporter_info.get("ReporterOrgEmail")
-                or reporter_info.get("ReporterContactEmail")
-                or "unknown@example.com"
-            ),
-            "type": "automated",  # v3 didn't distinguish, assume automated
+            "org": reporter_org,
+            "contact": reporter_contact,
+            "domain": reporter_domain,
+        },
+        "sender": {
+            "org": reporter_org,
+            "contact": reporter_contact,
+            "domain": reporter_domain,
         },
         "source_identifier": source.get("IP", "0.0.0.0"),  # nosec B104
         "category": category,

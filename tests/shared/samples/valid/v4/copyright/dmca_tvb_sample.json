@@ -5,7 +5,7 @@
   "reporter": {
     "org": "TVB Copyright Department",
     "contact": "copyright@tvb.com",
-    "type": "automated"
+    "domain": "tvb.com"
   },
   "source_identifier": "198.51.100.75",
   "category": "copyright",
@@ -39,5 +39,10 @@
     "revenue_impact": "medium",
     "legal_review": "not_required",
     "content_type": "premium_episode"
+  },
+  "sender": {
+    "org": "TVB Copyright Department",
+    "contact": "copyright@tvb.com",
+    "domain": "tvb.com"
   }
 }
