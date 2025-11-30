@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xarf"
-version = "4.0.0a1"
+version = "4.0.0"
 description = "XARF v4 Python Parser - Parse and validate XARF v4 abuse reports"
 readme = "README.md"
 license = {text = "MIT"}
@@ -16,7 +16,7 @@ maintainers = [
 ]
 keywords = ["xarf", "abuse", "security", "parser", "validation"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",

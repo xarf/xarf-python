@@ -7,13 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- **Legacy Tag Naming**: Updated v3 compatibility tags from `legacy:class:` to `legacy:category:` to align with v4 field naming conventions
-  - Affects only v3 report conversion metadata tags
-  - Maintains consistency with `category` field terminology throughout codebase
+## [4.0.0] - 2025-11-30
 
-### Fixed
-- **Documentation Examples**: Corrected CONTRIBUTING.md sample report to use `category` field instead of outdated `class` reference
+### 🎉 Stable Release
+
+XARF v4.0.0 Python parser is now production-ready! This release includes comprehensive support for all XARF v4 categories, backwards compatibility with v3, and modern Python 3.8-3.12 support.
 
 ### Added
 - **XARF v3 Backwards Compatibility**: Automatic conversion from v3 to v4 format
@@ -27,26 +25,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Migration guide documentation at `docs/migration-guide.md`
 
 ### Changed
+- **Production Status**: Updated from Beta to Production/Stable
 - **Pydantic V2 Migration**: Updated from Pydantic V1 to V2 API
   - Replaced `@validator` with `@field_validator` for all model validators
   - Updated `Config` class to `ConfigDict` in XARFReport model
   - Changed `allow_population_by_field_name` to `populate_by_name`
   - All validators now use `@classmethod` decorator with type hints
   - Fixed Python 3.13+ datetime deprecation warnings
+- **Legacy Tag Naming**: Updated v3 compatibility tags from `legacy:class:` to `legacy:category:` to align with v4 field naming conventions
+  - Affects only v3 report conversion metadata tags
+  - Maintains consistency with `category` field terminology throughout codebase
 
 ### Fixed
 - Resolved all Pydantic V2 deprecation warnings in models
 - Fixed `datetime.utcnow()` deprecation by using `datetime.now(timezone.utc)`
 - Improved type hints for Pydantic V2 compatibility
 - Updated import statements to use `pydantic.ConfigDict` and `field_validator`
+- **Documentation Examples**: Corrected CONTRIBUTING.md sample report to use `category` field instead of outdated `class` reference
 
 ### Documentation
 - Added v3 compatibility section to README with example code
 - Created comprehensive migration guide (`docs/migration-guide.md`)
 - Updated feature list to highlight v3 support and Pydantic V2 compatibility
 - Added documentation links for migration guide
-
-## [4.0.0] - 2024-01-20
 
 ### Breaking Changes
 
