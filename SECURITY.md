@@ -2,126 +2,127 @@
 
 ## Supported Versions
 
-We actively support and provide security updates for the following versions:
-
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.x.x   | :white_check_mark: |
-| 1.x.x   | :x:                |
+| 4.0.x   | :white_check_mark: |
+| < 4.0   | :x:                |
 
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security issue in XARF Python Parser, please report it responsibly.
+The XARF project takes security vulnerabilities seriously. We appreciate your efforts to responsibly disclose your findings.
 
 ### How to Report
 
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
-Instead, report security vulnerabilities by:
+Instead, please report security vulnerabilities by emailing:
 
-1. **Email**: Send details to security@xarf.org
-2. **Private Advisory**: Use GitHub's [private security advisory feature](https://github.com/xarf/xarf-python/security/advisories/new)
+**contact@xarf.org**
 
 ### What to Include
 
-When reporting a vulnerability, please include:
+Please include the following information in your report:
 
-- Description of the vulnerability
-- Steps to reproduce the issue
-- Affected versions
-- Potential impact assessment
-- Any proof-of-concept code (if applicable)
-- Your name/handle for credit (optional)
+- Type of vulnerability (e.g., injection, XSS, authentication bypass)
+- Full paths of source file(s) related to the vulnerability
+- Location of the affected source code (tag/branch/commit or direct URL)
+- Step-by-step instructions to reproduce the issue
+- Proof-of-concept or exploit code (if possible)
+- Impact of the issue, including how an attacker might exploit it
 
 ### Response Timeline
 
-- **Acknowledgment**: Within 48 hours of report
-- **Initial Assessment**: Within 5 business days
-- **Status Updates**: Every 7 days until resolution
-- **Fix Timeline**: Critical issues within 30 days, others within 90 days
+- **Initial Response**: Within 48 hours
+- **Status Update**: Within 7 days
+- **Fix Timeline**: Depends on severity and complexity
 
-### Disclosure Policy
+### Security Update Process
 
-- We will coordinate public disclosure with you
-- Security advisories will be published after fixes are released
-- We credit security researchers in advisories (unless you prefer to remain anonymous)
+1. **Triage**: We'll confirm the vulnerability and assess severity
+2. **Fix Development**: We'll develop and test a fix
+3. **Disclosure**: We'll coordinate disclosure timing with you
+4. **Release**: We'll release a security update
+5. **Announcement**: We'll publish a security advisory
 
-## Security Features
+## Security Best Practices
 
-This project implements multiple security layers:
+### For Users
 
-### Automated Scanning
+1. **Keep Updated**: Always use the latest stable version
+2. **Validate Input**: Never trust user-provided XARF reports without validation
+3. **Size Limits**: Enforce size limits on evidence payloads (default: 5MB per item, 15MB total)
+4. **Email Validation**: Use strict mode for email validation when processing reports from untrusted sources
+5. **Network Exposure**: Don't expose XARF parser directly to the internet without proper validation
 
-- **CodeQL Analysis**: Deep semantic security analysis (weekly + on PRs)
-- **Dependency Review**: PR-based vulnerability scanning
-- **Dependabot**: Automated dependency security updates
-- **Secret Scanning**: Detects committed credentials
-- **Bandit**: Python-specific security linter in CI
+### For Developers
 
-### Code Quality Gates
-
-All pull requests must pass:
-
-- Static security analysis (Bandit)
-- Type safety checks (MyPy strict mode)
-- Dependency vulnerability scans
-- Code complexity limits (Radon)
-
-### Security Best Practices
-
-Our codebase follows:
-
-- Strict type hints for safety
-- Input validation via Pydantic models
-- No hardcoded credentials
-- Principle of least privilege
-- Regular dependency updates
+1. **Input Validation**: The parser validates all fields against JSON schema
+2. **Email Validation**: Uses `email-validator` library for RFC-compliant validation
+3. **Date Validation**: Validates timestamps against ISO 8601 format
+4. **Size Limits**: Built-in limits prevent DoS via large payloads
+5. **Type Safety**: Full type hints and Pydantic validation
 
 ## Known Security Considerations
 
-### XARF Report Processing
+### 1. Evidence Payload Size
 
-When processing XARF reports:
+XARF reports can include evidence payloads. The parser enforces:
+- Maximum 5MB per evidence item
+- Maximum 15MB total evidence per report
 
-1. **Input Validation**: All reports are validated against JSON schema
-2. **Email Parsing**: Uses python-email-validator for safe email processing
-3. **Date Handling**: Uses python-dateutil for timezone-aware parsing
-4. **No Code Execution**: Parser does not execute any user-provided code
+### 2. Email Address Validation
 
-### Dependencies
+The parser uses `email-validator` for email validation. In strict mode, it performs DNS MX record checks.
 
-We actively monitor and update dependencies for security issues:
+### 3. Timestamp Handling
 
-- Automated Dependabot updates for vulnerabilities
-- Grouped minor/patch updates for development dependencies
-- Individual PRs for production dependency major updates
+All timestamps must be in ISO 8601 format with timezone information. The parser validates format but does not check if timestamps are in the future.
 
-## Security Updates
+### 4. Schema Validation
 
-Security updates are released as:
+All reports are validated against JSON schema. Invalid reports are rejected.
 
-- **Critical**: Immediate patch release
-- **High**: Patch release within 7 days
-- **Moderate**: Included in next minor release
-- **Low**: Included in next release cycle
+### 5. V3 Compatibility Mode
 
-Subscribe to [GitHub Security Advisories](https://github.com/xarf/xarf-python/security/advisories) for notifications.
+When processing XARF v3 reports:
+- Automatic conversion is performed
+- Deprecation warnings are issued
+- Original v3 data is preserved in metadata
 
-## Responsible Disclosure
+## Vulnerability Disclosure Policy
 
-We are committed to working with security researchers under responsible disclosure guidelines:
+We follow a **coordinated disclosure** model:
 
-1. Allow reasonable time for fixes before public disclosure
-2. Avoid privacy violations and data destruction
-3. Do not exploit vulnerabilities beyond proof-of-concept
-4. Respect user privacy and data protection regulations
+1. **Private Disclosure**: Report sent to contact@xarf.org
+2. **Acknowledgment**: We confirm receipt within 48 hours
+3. **Investigation**: We investigate and develop a fix
+4. **Fix Release**: We release a security update
+5. **Public Disclosure**: We publish advisory 7 days after fix release
 
 ## Security Hall of Fame
 
-We recognize security researchers who help improve our security:
+We recognize security researchers who responsibly disclose vulnerabilities:
 
-<!-- Security researchers will be listed here after coordinated disclosure -->
+<!-- Security researchers will be listed here -->
+
+*No vulnerabilities reported yet.*
+
+## Bug Bounty Program
+
+Currently, we do not offer a bug bounty program. However, we deeply appreciate security research and will publicly acknowledge your contribution.
+
+## Contact
+
+- **Security Email**: contact@xarf.org
+- **PGP Key**: Not yet available
+- **GitHub Security Advisories**: https://github.com/xarf/xarf-python/security/advisories
+
+## Additional Resources
+
+- [XARF Specification](https://xarf.org)
+- [XARF Python Parser Documentation](https://github.com/xarf/xarf-python)
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 
 ---
 
-For general inquiries or questions about this policy, contact: security@xarf.org
+**Last Updated**: 2025-11-30
