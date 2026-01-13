@@ -3,7 +3,7 @@
   "ReporterInfo": {
     "ReporterOrg": "Example Security Vendor",
     "ReporterOrgDomain": "security-vendor.example",
-    "ReporterOrgEmail": "abuse@security-vendor.example", 
+    "ReporterOrgEmail": "abuse@security-vendor.example",
     "ReporterContactEmail": "phishing@security-vendor.example",
     "ReporterContactName": "Phishing Response Team",
     "ReporterContactPhone": "+1-555-0789"

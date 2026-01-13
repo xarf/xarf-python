@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from .exceptions import XARFSchemaError
 from .schema_utils import (
@@ -26,11 +26,11 @@ class FieldMetadata:
     description: str
     required: bool
     recommended: bool
-    field_type: Optional[str] = None
-    enum: Optional[list[str]] = None
-    format: Optional[str] = None
-    minimum: Optional[float] = None
-    maximum: Optional[float] = None
+    field_type: str | None = None
+    enum: list[str] | None = None
+    format: str | None = None
+    minimum: float | None = None
+    maximum: float | None = None
 
 
 class SchemaRegistry:
@@ -44,30 +44,30 @@ class SchemaRegistry:
     - Field metadata including descriptions
     """
 
-    _instance: Optional["SchemaRegistry"] = None
+    _instance: SchemaRegistry | None = None
 
     def __init__(self) -> None:
         """Initialize the schema registry.
 
         Note: Use get_instance() instead of direct instantiation.
         """
-        self._schemas_dir: Optional[Path] = None
-        self._core_schema: Optional[dict[str, Any]] = None
+        self._schemas_dir: Path | None = None
+        self._core_schema: dict[str, Any] | None = None
         self._type_schemas: dict[str, dict[str, Any]] = {}
 
         # Cached validation data
-        self._categories_cache: Optional[set[str]] = None
-        self._types_per_category_cache: Optional[dict[str, set[str]]] = None
-        self._evidence_sources_cache: Optional[set[str]] = None
-        self._severities_cache: Optional[set[str]] = None
-        self._required_fields_cache: Optional[set[str]] = None
-        self._contact_required_fields_cache: Optional[set[str]] = None
+        self._categories_cache: set[str] | None = None
+        self._types_per_category_cache: dict[str, set[str]] | None = None
+        self._evidence_sources_cache: set[str] | None = None
+        self._severities_cache: set[str] | None = None
+        self._required_fields_cache: set[str] | None = None
+        self._contact_required_fields_cache: set[str] | None = None
 
         # Load schemas
         self._load_schemas()
 
     @classmethod
-    def get_instance(cls) -> "SchemaRegistry":
+    def get_instance(cls) -> SchemaRegistry:
         """Get the singleton instance.
 
         Returns:
@@ -338,9 +338,7 @@ class SchemaRegistry:
         self._contact_required_fields_cache = default_fields
         return self._contact_required_fields_cache
 
-    def get_type_schema(
-        self, category: str, type_name: str
-    ) -> Optional[dict[str, Any]]:
+    def get_type_schema(self, category: str, type_name: str) -> dict[str, Any] | None:
         """Get type-specific schema for a category/type combination.
 
         Args:
@@ -363,7 +361,7 @@ class SchemaRegistry:
 
         return None
 
-    def get_field_metadata(self, field_name: str) -> Optional[FieldMetadata]:
+    def get_field_metadata(self, field_name: str) -> FieldMetadata | None:
         """Get field metadata from schema.
 
         Args:
@@ -530,7 +528,7 @@ class SchemaRegistry:
         if base_schema:
             self._extract_fields_from_schema(base_schema, core_fields, result)
 
-    def _load_base_schema(self, ref: str) -> Optional[dict[str, Any]]:
+    def _load_base_schema(self, ref: str) -> dict[str, Any] | None:
         """Load a base schema referenced by $ref.
 
         Args:
@@ -542,8 +540,13 @@ class SchemaRegistry:
         if self._schemas_dir is None:
             return None
 
-        # Extract filename from ref
-        filename = ref.lstrip("./").lstrip("../")
+        # Extract filename from ref (remove leading ./ or ../)
+        filename = ref
+        while filename.startswith("./") or filename.startswith("../"):
+            if filename.startswith("../"):
+                filename = filename[3:]
+            elif filename.startswith("./"):
+                filename = filename[2:]
         schema_path = self._schemas_dir / "types" / filename
 
         try:
@@ -582,7 +585,7 @@ class SchemaRegistry:
         return all_props - required
 
     def get_optional_field_info(
-        self, category: Optional[str] = None, type_name: Optional[str] = None
+        self, category: str | None = None, type_name: str | None = None
     ) -> list[dict[str, Any]]:
         """Get detailed info about optional fields.
 

@@ -8,7 +8,7 @@ import hashlib
 import secrets
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from .exceptions import XARFError
 
@@ -46,7 +46,7 @@ class XARFGenerator:
     }
 
     # Valid types per category
-    EVENT_TYPES: Dict[str, List[str]] = {
+    EVENT_TYPES: dict[str, list[str]] = {
         "abuse": ["ddos", "malware", "phishing", "spam", "scanner"],
         "vulnerability": ["cve", "misconfiguration", "open_service"],
         "connection": [
@@ -115,7 +115,7 @@ class XARFGenerator:
     VALID_SEVERITIES = {"low", "medium", "high", "critical"}
 
     # Evidence content types by category
-    EVIDENCE_CONTENT_TYPES: Dict[str, List[str]] = {
+    EVIDENCE_CONTENT_TYPES: dict[str, list[str]] = {
         "abuse": ["application/pcap", "text/plain", "image/png"],
         "vulnerability": ["text/plain", "application/json", "image/png"],
         "connection": ["application/pcap", "text/plain", "application/json"],
@@ -191,9 +191,9 @@ class XARFGenerator:
         elif algorithm == "sha512":
             return hashlib.sha512(data).hexdigest()
         elif algorithm == "sha1":
-            return hashlib.sha1(data).hexdigest()  # nosec B324
+            return hashlib.sha1(data).hexdigest()  # noqa: S324 - legacy support
         elif algorithm == "md5":
-            return hashlib.md5(data).hexdigest()  # nosec B324
+            return hashlib.md5(data).hexdigest()  # noqa: S324 - legacy support
         else:
             raise XARFError(f"Unsupported hash algorithm: {algorithm}")
 
@@ -203,7 +203,7 @@ class XARFGenerator:
         description: str,
         payload: Union[str, bytes],
         hash_algorithm: str = "sha256",
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """Create an evidence item with automatic hashing.
 
         Args:
@@ -250,16 +250,16 @@ class XARFGenerator:
         reporter_org: Optional[str] = None,
         reporter_type: str = "automated",
         evidence_source: str = "automated_scan",
-        on_behalf_of: Optional[Dict[str, str]] = None,
+        on_behalf_of: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
-        evidence: Optional[List[Dict[str, str]]] = None,
+        evidence: Optional[list[dict[str, str]]] = None,
         severity: Optional[str] = None,
         confidence: Optional[float] = None,
-        tags: Optional[List[str]] = None,
-        occurrence: Optional[Dict[str, str]] = None,
-        target: Optional[Dict[str, Any]] = None,
-        additional_fields: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        tags: Optional[list[str]] = None,
+        occurrence: Optional[dict[str, str]] = None,
+        target: Optional[dict[str, Any]] = None,
+        additional_fields: Optional[dict[str, Any]] = None,
+    ) -> dict[str, Any]:
         """Generate a complete XARF v4.0.0 report.
 
         Args:
@@ -348,7 +348,7 @@ class XARFGenerator:
             raise XARFError("confidence must be between 0.0 and 1.0")
 
         # Build base report structure
-        report: Dict[str, Any] = {
+        report: dict[str, Any] = {
             "xarf_version": self.XARF_VERSION,
             "report_id": self.generate_uuid(),
             "timestamp": self.generate_timestamp(),
@@ -402,7 +402,7 @@ class XARFGenerator:
 
     def generate_random_evidence(
         self, category: str, description: Optional[str] = None
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """Generate random sample evidence for testing purposes.
 
         Args:
@@ -440,7 +440,7 @@ class XARFGenerator:
         report_type: str,
         include_evidence: bool = True,
         include_optional: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate a sample XARF report with randomized data for testing.
 
         Useful for generating test reports, examples, and documentation.
@@ -487,7 +487,7 @@ class XARFGenerator:
         reporter_contact = f"abuse@{secrets.choice(sample_domains)}"
 
         # Build report parameters
-        params: Dict[str, Any] = {
+        params: dict[str, Any] = {
             "category": category,
             "report_type": report_type,
             "source_identifier": source_ip,

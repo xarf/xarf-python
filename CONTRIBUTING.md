@@ -134,17 +134,17 @@ xarf/
 ```python
 def parse_report(self, json_data: Union[str, Dict[str, Any]]) -> XARFReport:
     """Parse XARF report from JSON data.
-    
+
     Args:
         json_data: JSON string or dictionary containing XARF report data
-        
+
     Returns:
         XARFReport: Parsed and validated report object
-        
+
     Raises:
         XARFParseError: If JSON parsing fails
         XARFValidationError: If validation fails in strict mode
-        
+
     Example:
         >>> parser = XARFParser()
         >>> report = parser.parse('{"xarf_version": "4.0.0", ...}')
@@ -171,30 +171,30 @@ except XARFParseError as e:
 ```python
 class TestMessagingReports:
     """Test parsing of messaging class reports."""
-    
+
     def test_valid_spam_report(self):
         """Test parsing of valid spam report."""
         report_data = {
             "xarf_version": "4.0.0",
             # ... complete valid data
         }
-        
+
         parser = XARFParser()
         report = parser.parse(report_data)
-        
+
         assert isinstance(report, MessagingReport)
         assert report.class_ == "messaging"
         assert report.type == "spam"
-    
+
     def test_missing_required_field(self):
         """Test handling of missing required fields."""
         invalid_data = {"xarf_version": "4.0.0"}  # Missing required fields
-        
+
         parser = XARFParser(strict=True)
-        
+
         with pytest.raises(XARFValidationError) as exc_info:
             parser.parse(invalid_data)
-        
+
         assert "Missing required fields" in str(exc_info.value)
 ```
 

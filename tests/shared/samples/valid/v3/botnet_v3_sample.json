@@ -1,10 +1,10 @@
 {
-  "Version": "3.0.0", 
+  "Version": "3.0.0",
   "ReporterInfo": {
     "ReporterOrg": "Example CERT Organization",
     "ReporterOrgDomain": "cert-org.example",
     "ReporterOrgEmail": "cert@cert-org.example",
-    "ReporterContactEmail": "botnet@cert-org.example", 
+    "ReporterContactEmail": "botnet@cert-org.example",
     "ReporterContactName": "Malware Analysis Team",
     "ReporterContactPhone": "+1-555-0321"
   },

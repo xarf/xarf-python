@@ -12,7 +12,13 @@ __email__ = "contact@xarf.org"
 from .exceptions import XARFError, XARFParseError, XARFSchemaError, XARFValidationError
 from .generator import XARFGenerator
 from .models import XARFReport
-from .parser import XARFParser
+from .parser import (
+    ValidationError,
+    ValidationInfo,
+    ValidationResult,
+    ValidationWarning,
+    XARFParser,
+)
 from .schema_registry import FieldMetadata, SchemaRegistry, schema_registry
 from .schema_validator import (
     SchemaValidationError,
@@ -26,6 +32,10 @@ from .v3_compat import convert_v3_to_v4, is_v3_report
 __all__ = [
     # Parser
     "XARFParser",
+    "ValidationResult",
+    "ValidationError",
+    "ValidationWarning",
+    "ValidationInfo",
     # Models
     "XARFReport",
     # Generator

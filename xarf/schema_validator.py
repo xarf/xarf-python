@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import jsonschema
 from jsonschema import Draft202012Validator
@@ -46,10 +46,10 @@ class SchemaValidator:
 
     def __init__(self) -> None:
         """Initialize the schema validator."""
-        self._schemas_dir: Optional[Path] = None
-        self._core_schema: Optional[dict[str, Any]] = None
+        self._schemas_dir: Path | None = None
+        self._core_schema: dict[str, Any] | None = None
         self._type_schemas: dict[str, dict[str, Any]] = {}
-        self._resolver: Optional[jsonschema.RefResolver] = None
+        self._resolver: jsonschema.RefResolver | None = None
 
         self._load_schemas()
 
@@ -82,9 +82,7 @@ class SchemaValidator:
             referrer=self._core_schema,
         )
 
-    def _get_type_schema(
-        self, category: str, type_name: str
-    ) -> Optional[dict[str, Any]]:
+    def _get_type_schema(self, category: str, type_name: str) -> dict[str, Any] | None:
         """Get the type-specific schema for a category/type combination.
 
         Args:
