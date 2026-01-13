@@ -74,7 +74,7 @@ where = ["."]
 include = ["xarf*"]
 
 [tool.setuptools.package-data]
-xarf = ["schemas/*.json"]
+xarf = ["schemas/**/*.json"]
 
 [tool.black]
 line-length = 88
