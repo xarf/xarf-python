@@ -1,7 +1,6 @@
 # XARF v4 Python Parser
 
 [![CI](https://github.com/xarf/xarf-python/actions/workflows/ci.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/xarf/xarf-python/actions/workflows/codeql.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/codeql.yml)
 [![PyPI version](https://badge.fury.io/py/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![Python versions](https://img.shields.io/pypi/pyversions/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
