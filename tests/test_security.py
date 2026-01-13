@@ -56,9 +56,9 @@ class TestUUIDGeneration:
             # Check version (should be 4)
             assert test_uuid.version == 4, f"Wrong UUID version: {test_uuid.version}"
             # Check variant (should be RFC 4122)
-            assert (
-                test_uuid.variant == uuid.RFC_4122
-            ), f"Wrong UUID variant: {test_uuid.variant}"
+            assert test_uuid.variant == uuid.RFC_4122, (
+                f"Wrong UUID variant: {test_uuid.variant}"
+            )
 
     def test_uuid_randomness(self) -> None:
         """Test UUID randomness (simple entropy check)."""
@@ -140,9 +140,9 @@ class TestTimestampFormatting:
 
             result = parser.validate(report_data)
             assert not result.valid, f"Invalid timestamp accepted: {invalid_ts}"
-            assert any(
-                "timestamp" in e.field.lower() for e in result.errors
-            ), f"No timestamp error for: {invalid_ts}"
+            assert any("timestamp" in e.field.lower() for e in result.errors), (
+                f"No timestamp error for: {invalid_ts}"
+            )
 
     def test_timestamp_ordering(self) -> None:
         """Test timestamp chronological ordering."""
