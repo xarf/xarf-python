@@ -71,16 +71,55 @@ class SchemaValidator:
         self._core_schema = load_json_schema(core_path)
 
     def _setup_resolver(self) -> None:
-        """Set up the JSON Schema resolver for $ref resolution."""
+        """Set up the JSON Schema resolver for $ref resolution.
+
+        Creates a schema store that maps https://xarf.org/schemas/v4/... URLs
+        to locally bundled schema files, avoiding network requests.
+        """
         if self._schemas_dir is None or self._core_schema is None:
             return
 
-        # Create a resolver that can resolve local file references
-        schema_uri = self._schemas_dir.as_uri() + "/"
+        # Build a store mapping schema $id URLs to local schema content
+        schema_store = self._build_schema_store()
+
+        # Use the core schema's $id as base URI, with local store for resolution
+        base_uri = self._core_schema.get("$id", self._schemas_dir.as_uri() + "/")
         self._resolver = jsonschema.RefResolver(
-            base_uri=schema_uri,
+            base_uri=base_uri,
             referrer=self._core_schema,
+            store=schema_store,
         )
+
+    def _build_schema_store(self) -> dict[str, dict[str, Any]]:
+        """Build a schema store mapping $id URLs to local schemas.
+
+        Returns:
+            Dict mapping schema $id URLs to schema content.
+        """
+        store: dict[str, dict[str, Any]] = {}
+
+        if self._schemas_dir is None:
+            return store
+
+        # Add core schema
+        if self._core_schema:
+            schema_id = self._core_schema.get("$id")
+            if schema_id:
+                store[schema_id] = self._core_schema
+
+        # Add all type schemas from the types directory
+        types_dir = self._schemas_dir / "types"
+        if types_dir.exists():
+            for schema_file in types_dir.glob("*.json"):
+                try:
+                    schema = load_json_schema(schema_file)
+                    schema_id = schema.get("$id")
+                    if schema_id:
+                        store[schema_id] = schema
+                except XARFSchemaError:
+                    continue
+
+        return store
 
     def _get_type_schema(self, category: str, type_name: str) -> dict[str, Any] | None:
         """Get the type-specific schema for a category/type combination.
