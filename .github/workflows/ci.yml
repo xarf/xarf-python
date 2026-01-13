@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
       - uses: actions/checkout@v4
@@ -41,39 +41,8 @@ jobs:
           fail_ci_if_error: false
 
   code-quality:
-    name: Code Quality - ${{ matrix.check.name }}
+    name: Code Quality
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        check:
-          - name: "Format (black)"
-            cmd: "black --check ."
-            error: false
-          - name: "Imports (isort)"
-            cmd: "isort --check-only --profile black ."
-            error: false
-          - name: "Linting (flake8)"
-            cmd: "flake8 xarf/ tests/"
-            error: false
-          - name: "Security (bandit)"
-            cmd: "bandit -r xarf/ -ll"
-            error: false
-          - name: "Types (mypy)"
-            cmd: "mypy xarf/"
-            error: false
-          - name: "Complexity (radon)"
-            cmd: "radon cc xarf/ -a -nb"
-            error: false
-          - name: "Maintainability (radon)"
-            cmd: "radon mi xarf/ -nb"
-            error: false
-          - name: "Docstrings (pydocstyle)"
-            cmd: "pydocstyle xarf/"
-            error: false
-          - name: "Dead code (vulture)"
-            cmd: "vulture xarf/ .vulture_whitelist.py --min-confidence 80"
-            error: false
 
     steps:
       - uses: actions/checkout@v4
@@ -89,6 +58,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev,test]"
 
-      - name: Run ${{ matrix.check.name }}
-        run: ${{ matrix.check.cmd }}
-        continue-on-error: ${{ matrix.check.error }}
+      - name: Lint (ruff)
+        run: ruff check . --output-format=github
+
+      - name: Format (ruff)
+        run: ruff format --check .
+
+      - name: Types (mypy)
+        run: mypy --strict xarf/
+
+      - name: Docstrings (pydocstyle)
+        run: pydocstyle xarf/
+
+      - name: Dead code (vulture)
+        run: vulture xarf/ .vulture_whitelist.py --min-confidence 80
+
+      - name: Complexity (radon)
+        run: radon cc xarf/ -a -nb
+
+      - name: Maintainability (radon)
+        run: radon mi xarf/ -nb
