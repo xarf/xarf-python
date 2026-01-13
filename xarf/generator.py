@@ -2,22 +2,41 @@
 
 This module provides functionality for generating XARF v4.0.0 compliant reports
 programmatically with proper validation and type safety.
+
+Aligned with the JavaScript reference implementation (xarf-javascript).
 """
+
+from __future__ import annotations
 
 import hashlib
 import secrets
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Optional, Union
+from typing import Any, TypedDict
 
 from .exceptions import XARFError
+from .schema_registry import schema_registry
+
+
+class ContactInfo(TypedDict):
+    """Contact information for reporter/sender.
+
+    Per xarf-core.json $defs/contact_info:
+    - org: Organization name (required)
+    - contact: Contact email address (required)
+    - domain: Organization domain for verification (required)
+    """
+
+    org: str
+    contact: str
+    domain: str
 
 
 class XARFGenerator:
     """Generator for creating XARF v4.0.0 compliant reports.
 
     This class provides methods to generate complete XARF reports with all
-    required fields, proper validation, and support for all 8 report categories.
+    required fields, proper validation, and support for all 7 report categories.
 
     Example:
         >>> generator = XARFGenerator()
@@ -25,109 +44,73 @@ class XARFGenerator:
         ...     category="connection",
         ...     report_type="ddos",
         ...     source_identifier="192.0.2.100",
-        ...     reporter_contact="abuse@example.com",
-        ...     reporter_org="Example Security Team"
+        ...     reporter={
+        ...         "org": "Example Security Team",
+        ...         "contact": "abuse@example.com",
+        ...         "domain": "example.com",
+        ...     },
+        ...     sender={
+        ...         "org": "Example Security Team",
+        ...         "contact": "abuse@example.com",
+        ...         "domain": "example.com",
+        ...     },
         ... )
     """
 
     # XARF v4.0.0 specification constants
     XARF_VERSION = "4.0.0"
 
-    # Valid categories as per XARF spec
-    VALID_CATEGORIES = {
-        "abuse",
-        "messaging",
-        "connection",
-        "content",
-        "copyright",
-        "infrastructure",
-        "vulnerability",
-        "reputation",
-    }
-
-    # Valid types per category
-    EVENT_TYPES: dict[str, list[str]] = {
-        "abuse": ["ddos", "malware", "phishing", "spam", "scanner"],
-        "vulnerability": ["cve", "misconfiguration", "open_service"],
-        "connection": [
-            "compromised",
-            "botnet",
-            "malicious_traffic",
-            "ddos",
-            "port_scan",
-            "login_attack",
-            "sql_injection",
-            "reconnaissance",
-            "scraping",
-            "vuln_scanning",
-            "bot",
-            "infected_host",
-        ],
-        "content": [
-            "illegal",
-            "malicious",
-            "policy_violation",
-            "phishing",
-            "malware",
-            "fraud",
-            "exposed_data",
-            "csam",
-            "csem",
-            "brand_infringement",
-            "suspicious_registration",
-            "remote_compromise",
-        ],
-        "copyright": [
-            "infringement",
-            "dmca",
-            "trademark",
-            "p2p",
-            "cyberlocker",
-            "link_site",
-            "ugc_platform",
-            "usenet",
-            "copyright",
-        ],
-        "messaging": ["bulk_messaging", "spam"],
-        "reputation": ["blocklist", "threat_intelligence"],
-        "infrastructure": ["botnet", "compromised_server"],
-    }
-
-    # Valid evidence sources
-    VALID_EVIDENCE_SOURCES = {
-        "spamtrap",
-        "honeypot",
-        "user_report",
-        "automated_scan",
-        "manual_analysis",
-        "vulnerability_scan",
-        "researcher_analysis",
-        "threat_intelligence",
-        "flow_analysis",
-        "ids_ips",
-        "siem",
-    }
-
-    # Valid reporter types
-    VALID_REPORTER_TYPES = {"automated", "manual", "hybrid"}
-
-    # Valid severity levels
-    VALID_SEVERITIES = {"low", "medium", "high", "critical"}
-
     # Evidence content types by category
     EVIDENCE_CONTENT_TYPES: dict[str, list[str]] = {
-        "abuse": ["application/pcap", "text/plain", "image/png"],
-        "vulnerability": ["text/plain", "application/json", "image/png"],
+        "messaging": ["message/rfc822", "text/plain", "text/html"],
         "connection": ["application/pcap", "text/plain", "application/json"],
         "content": ["image/png", "text/html", "application/pdf"],
-        "copyright": ["text/html", "image/png", "application/pdf"],
-        "messaging": ["message/rfc822", "text/plain", "text/html"],
-        "reputation": ["application/json", "text/plain", "text/csv"],
         "infrastructure": ["application/pcap", "text/plain", "application/json"],
+        "copyright": ["text/html", "image/png", "application/pdf"],
+        "vulnerability": ["text/plain", "application/json", "image/png"],
+        "reputation": ["application/json", "text/plain", "text/csv"],
     }
 
     def __init__(self) -> None:
         """Initialize the XARF generator."""
+
+    @property
+    def valid_categories(self) -> set[str]:
+        """Get valid categories from schema registry.
+
+        Returns:
+            Set of valid category names.
+        """
+        return schema_registry.get_categories()
+
+    def get_types_for_category(self, category: str) -> set[str]:
+        """Get valid types for a category from schema registry.
+
+        Args:
+            category: The category to get types for.
+
+        Returns:
+            Set of valid type names.
+        """
+        return schema_registry.get_types_for_category(category)
+
+    @property
+    def valid_evidence_sources(self) -> set[str]:
+        """Get valid evidence sources from schema registry.
+
+        Returns:
+            Set of valid evidence source values.
+        """
+        return schema_registry.get_evidence_sources()
+
+    @property
+    def valid_severities(self) -> set[str]:
+        """Get valid severity levels from schema registry.
+
+        Returns:
+            Set of valid severity values.
+        """
+        return schema_registry.get_severities()
 
     def generate_uuid(self) -> str:
         """Generate a UUID v4 for report identification.
@@ -163,7 +146,7 @@ class XARFGenerator:
         """
         return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    def generate_hash(self, data: Union[str, bytes], algorithm: str = "sha256") -> str:
+    def generate_hash(self, data: str | bytes, algorithm: str = "sha256") -> str:
         """Generate a cryptographic hash of the provided data.
 
         Args:
@@ -201,7 +184,7 @@ class XARFGenerator:
         self,
         content_type: str,
         description: str,
-        payload: Union[str, bytes],
+        payload: str | bytes,
         hash_algorithm: str = "sha256",
     ) -> dict[str, str]:
         """Create an evidence item with automatic hashing.
@@ -232,7 +215,9 @@ class XARFGenerator:
             payload_str = payload
             payload_bytes = payload.encode("utf-8")
 
-        evidence_hash = self.generate_hash(payload_bytes, hash_algorithm)
+        hash_value = self.generate_hash(payload_bytes, hash_algorithm)
+        # v4 format: algorithm:hexvalue
+        evidence_hash = f"{hash_algorithm}:{hash_value}"
 
         return {
             "content_type": content_type,
@@ -241,24 +226,94 @@ class XARFGenerator:
             "hash": evidence_hash,
         }
 
+    def _validate_contact_info(
+        self, contact: dict[str, Any] | None, field_name: str
+    ) -> None:
+        """Validate contact info structure.
+
+        Args:
+            contact: Contact info dict to validate.
+            field_name: Name of the field for error messages.
+
+        Raises:
+            XARFError: If validation fails.
+        """
+        if contact is None:
+            raise XARFError(f"{field_name} is required")
+
+        required_fields = schema_registry.get_contact_required_fields()
+        for field in required_fields:
+            if field not in contact or not contact[field]:
+                raise XARFError(f"{field_name}.{field} is required")
+
+    def _validate_category_and_type(self, category: str, report_type: str) -> None:
+        """Validate category and type against schema.
+
+        Args:
+            category: Report category.
+            report_type: Report type.
+
+        Raises:
+            XARFError: If validation fails.
+        """
+        valid_categories = self.valid_categories
+        if category not in valid_categories:
+            raise XARFError(
+                f"Invalid category '{category}'. Must be one of: "
+                f"{', '.join(sorted(valid_categories))}"
+            )
+
+        valid_types = self.get_types_for_category(category)
+        if report_type not in valid_types:
+            raise XARFError(
+                f"Invalid type '{report_type}' for category '{category}'. "
+                f"Must be one of: {', '.join(sorted(valid_types))}"
+            )
+
+    def _validate_evidence_source(self, evidence_source: str | None) -> None:
+        """Validate evidence source if provided.
+
+        Args:
+            evidence_source: Evidence source to validate.
+
+        Raises:
+            XARFError: If validation fails.
+        """
+        if evidence_source is None:
+            return
+
+        valid_sources = self.valid_evidence_sources
+        if valid_sources and evidence_source not in valid_sources:
+            raise XARFError(
+                f"Invalid evidence_source '{evidence_source}'. Must be one of: "
+                f"{', '.join(sorted(valid_sources))}"
+            )
+
+    def _validate_confidence(self, confidence: float | None) -> None:
+        """Validate confidence score if provided.
+
+        Args:
+            confidence: Confidence score to validate.
+
+        Raises:
+            XARFError: If validation fails.
+        """
+        if confidence is not None and not (0.0 <= confidence <= 1.0):
+            raise XARFError("confidence must be between 0.0 and 1.0")
+
     def generate_report(
         self,
         category: str,
         report_type: str,
         source_identifier: str,
-        reporter_contact: str,
-        reporter_org: Optional[str] = None,
-        reporter_type: str = "automated",
-        evidence_source: str = "automated_scan",
-        on_behalf_of: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        evidence: Optional[list[dict[str, str]]] = None,
-        severity: Optional[str] = None,
-        confidence: Optional[float] = None,
-        tags: Optional[list[str]] = None,
-        occurrence: Optional[dict[str, str]] = None,
-        target: Optional[dict[str, Any]] = None,
-        additional_fields: Optional[dict[str, Any]] = None,
+        reporter: dict[str, str],
+        sender: dict[str, str],
+        evidence_source: str | None = None,
+        description: str | None = None,
+        evidence: list[dict[str, str]] | None = None,
+        confidence: float | None = None,
+        tags: list[str] | None = None,
+        additional_fields: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Generate a complete XARF v4.0.0 report.
 
@@ -266,20 +321,14 @@ class XARFGenerator:
             category: Report category (e.g., "connection", "content").
             report_type: Specific type within category (e.g., "ddos", "phishing").
             source_identifier: Source IP address or identifier.
-            reporter_contact: Contact email for the reporter.
-            reporter_org: Organization name of the reporter (optional).
-            reporter_type: Type of reporter (default: "automated").
-            evidence_source: How the evidence was collected (default: "automated_scan").
-            on_behalf_of: Dictionary with "org" and optional "contact" keys for
-                         reporting on behalf of another entity.
+            reporter: Reporter contact info dict with org, contact, domain.
+            sender: Sender contact info dict with org, contact, domain.
+            evidence_source: How the evidence was collected (optional, recommended).
             description: Human-readable description of the incident.
             evidence: List of evidence items (dictionaries with content_type,
                      description, payload, and hash).
-            severity: Incident severity (low, medium, high, critical).
             confidence: Confidence score between 0.0 and 1.0.
             tags: List of tags for categorization.
-            occurrence: Dictionary with "start" and "end" ISO 8601 timestamps.
-            target: Dictionary with target information (ip, port, url, etc.).
             additional_fields: Category-specific fields to include in the report.
 
         Returns:
@@ -294,9 +343,16 @@ class XARFGenerator:
             ...     category="connection",
             ...     report_type="ddos",
             ...     source_identifier="192.0.2.100",
-            ...     reporter_contact="abuse@example.com",
-            ...     reporter_org="Example Security",
-            ...     severity="high"
+            ...     reporter={
+            ...         "org": "Example Security",
+            ...         "contact": "abuse@example.com",
+            ...         "domain": "example.com",
+            ...     },
+            ...     sender={
+            ...         "org": "Example Security",
+            ...         "contact": "abuse@example.com",
+            ...         "domain": "example.com",
+            ...     },
             ... )
             >>> report["xarf_version"]
             '4.0.0'
@@ -304,95 +360,53 @@ class XARFGenerator:
         # Validate required parameters
         if not source_identifier:
             raise XARFError("source_identifier is required")
-        if not reporter_contact:
-            raise XARFError("reporter_contact is required")
 
-        # Validate category
-        if category not in self.VALID_CATEGORIES:
-            raise XARFError(
-                f"Invalid category '{category}'. Must be one of: "
-                f"{', '.join(sorted(self.VALID_CATEGORIES))}"
-            )
+        # Validate contact info (v4 requires reporter and sender)
+        self._validate_contact_info(reporter, "reporter")
+        self._validate_contact_info(sender, "sender")
 
-        # Validate type for category
-        valid_types = self.EVENT_TYPES.get(category, [])
-        if report_type not in valid_types:
-            raise XARFError(
-                f"Invalid type '{report_type}' for category '{category}'. "
-                f"Must be one of: {', '.join(valid_types)}"
-            )
+        # Validate category and type against schema
+        self._validate_category_and_type(category, report_type)
 
-        # Validate reporter_type
-        if reporter_type not in self.VALID_REPORTER_TYPES:
-            raise XARFError(
-                f"Invalid reporter_type '{reporter_type}'. Must be one of: "
-                f"{', '.join(sorted(self.VALID_REPORTER_TYPES))}"
-            )
+        # Validate optional fields
+        self._validate_evidence_source(evidence_source)
+        self._validate_confidence(confidence)
 
-        # Validate evidence_source
-        if evidence_source not in self.VALID_EVIDENCE_SOURCES:
-            raise XARFError(
-                f"Invalid evidence_source '{evidence_source}'. Must be one of: "
-                f"{', '.join(sorted(self.VALID_EVIDENCE_SOURCES))}"
-            )
-
-        # Validate severity if provided
-        if severity and severity not in self.VALID_SEVERITIES:
-            raise XARFError(
-                f"Invalid severity '{severity}'. Must be one of: "
-                f"{', '.join(sorted(self.VALID_SEVERITIES))}"
-            )
-
-        # Validate confidence if provided
-        if confidence is not None and not (0.0 <= confidence <= 1.0):
-            raise XARFError("confidence must be between 0.0 and 1.0")
-
-        # Build base report structure
+        # Build base report structure (v4 compliant)
         report: dict[str, Any] = {
             "xarf_version": self.XARF_VERSION,
             "report_id": self.generate_uuid(),
             "timestamp": self.generate_timestamp(),
-            "reporter": {"contact": reporter_contact, "type": reporter_type},
+            "reporter": {
+                "org": reporter["org"],
+                "contact": reporter["contact"],
+                "domain": reporter["domain"],
+            },
+            "sender": {
+                "org": sender["org"],
+                "contact": sender["contact"],
+                "domain": sender["domain"],
+            },
             "source_identifier": source_identifier,
             "category": category,
             "type": report_type,
-            "evidence_source": evidence_source,
         }
 
-        # Add optional reporter fields
-        if reporter_org:
-            report["reporter"]["org"] = reporter_org
+        # Add optional fields only if provided
+        if evidence_source:
+            report["evidence_source"] = evidence_source
 
-        # Add on_behalf_of if provided
-        if on_behalf_of:
-            if "org" not in on_behalf_of:
-                raise XARFError("on_behalf_of must contain 'org' key")
-            report["reporter"]["on_behalf_of"] = on_behalf_of
-
-        # Add optional fields
         if description:
             report["description"] = description
 
         if evidence:
             report["evidence"] = evidence
 
-        if severity:
-            report["severity"] = severity
-
         if confidence is not None:
             report["confidence"] = confidence
 
         if tags:
             report["tags"] = tags
-
-        if occurrence:
-            if "start" in occurrence and "end" in occurrence:
-                report["occurrence"] = occurrence
-            else:
-                raise XARFError("occurrence must contain 'start' and 'end' keys")
-
-        if target:
-            report["target"] = target
 
         # Add any additional category-specific fields
         if additional_fields:
@@ -401,7 +415,7 @@ class XARFGenerator:
         return report
 
     def generate_random_evidence(
-        self, category: str, description: Optional[str] = None
+        self, category: str, description: str | None = None
     ) -> dict[str, str]:
         """Generate random sample evidence for testing purposes.
 
@@ -434,6 +448,42 @@ class XARFGenerator:
             content_type=content_type, description=description, payload=payload
         )
 
+    def _generate_sample_contacts(
+        self,
+    ) -> tuple[dict[str, str], dict[str, str]]:
+        """Generate sample contact info for reporter and sender.
+
+        Returns:
+            Tuple of (reporter, sender) contact info dicts.
+        """
+        sample_orgs = [
+            "Security Operations Center",
+            "Abuse Response Team",
+            "Network Security Team",
+            "Threat Intelligence Unit",
+            "SOC Team",
+        ]
+        sample_domains = ["example.com", "security.net", "abuse.org", "soc.io"]
+
+        reporter_org = secrets.choice(sample_orgs)
+        sender_org = secrets.choice(sample_orgs)
+        reporter_domain = secrets.choice(sample_domains)
+        sender_domain = secrets.choice(sample_domains)
+
+        reporter = {
+            "org": reporter_org,
+            "contact": f"abuse@{reporter_domain}",
+            "domain": reporter_domain,
+        }
+
+        sender = {
+            "org": sender_org,
+            "contact": f"report@{sender_domain}",
+            "domain": sender_domain,
+        }
+
+        return reporter, sender
+
     def generate_sample_report(
         self,
         category: str,
@@ -464,35 +514,19 @@ class XARFGenerator:
             'connection'
         """
         # Validate inputs
-        if category not in self.VALID_CATEGORIES:
-            raise XARFError(f"Invalid category: {category}")
-
-        valid_types = self.EVENT_TYPES.get(category, [])
-        if report_type not in valid_types:
-            raise XARFError(f"Invalid type '{report_type}' for category '{category}'")
+        self._validate_category_and_type(category, report_type)
 
         # Generate random test data
         source_ip = f"192.0.2.{secrets.randbelow(256)}"
-
-        sample_orgs = [
-            "Security Operations Center",
-            "Abuse Response Team",
-            "Network Security Team",
-            "Threat Intelligence Unit",
-            "SOC Team",
-        ]
-        reporter_org = secrets.choice(sample_orgs)
-
-        sample_domains = ["example.com", "security.net", "abuse.org", "soc.io"]
-        reporter_contact = f"abuse@{secrets.choice(sample_domains)}"
+        reporter, sender = self._generate_sample_contacts()
 
         # Build report parameters
         params: dict[str, Any] = {
             "category": category,
             "report_type": report_type,
             "source_identifier": source_ip,
-            "reporter_contact": reporter_contact,
-            "reporter_org": reporter_org,
+            "reporter": reporter,
+            "sender": sender,
             "description": f"Sample {report_type} report for testing",
         }
 
@@ -502,25 +536,16 @@ class XARFGenerator:
 
         # Add optional fields if requested
         if include_optional:
-            params["severity"] = secrets.choice(list(self.VALID_SEVERITIES))
+            severities = list(self.valid_severities)
+            if severities:
+                params["additional_fields"] = {
+                    "severity": secrets.choice(severities),
+                }
             params["confidence"] = round(0.7 + secrets.randbelow(30) / 100, 2)
-            params["tags"] = [category, report_type, "sample"]
-
-            # Add target information
-            target_ip = f"203.0.113.{secrets.randbelow(256)}"
-            params["target"] = {
-                "ip": target_ip,
-                "port": secrets.choice([53, 80, 443, 8080, 22, 25]),
-            }
-
-            # Add occurrence time range
-            now = datetime.now(timezone.utc)
-            start = datetime.fromtimestamp(
-                now.timestamp() - secrets.randbelow(7200), tz=timezone.utc
-            )
-            params["occurrence"] = {
-                "start": start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "end": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            }
+            params["tags"] = [
+                f"category:{category}",
+                f"type:{report_type}",
+                "source:sample",
+            ]
 
         return self.generate_report(**params)
