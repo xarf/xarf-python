@@ -3,7 +3,7 @@
   "xarf_version_target": "4.0.0",
   "last_updated": "2024-09-09",
   "description": "Comprehensive test case definitions for XARF v4 parsers",
-  
+
   "test_categories": {
     "valid_samples": {
       "description": "Valid XARF reports that should parse successfully",
@@ -22,7 +22,7 @@
           ]
         },
         {
-          "name": "v4_connection", 
+          "name": "v4_connection",
           "path": "v4/connection",
           "description": "XARF v4 connection class reports",
           "requirements": [
@@ -33,7 +33,7 @@
         },
         {
           "name": "v4_content",
-          "path": "v4/content", 
+          "path": "v4/content",
           "description": "XARF v4 content class reports",
           "requirements": [
             "Parser must successfully parse all samples",
@@ -44,7 +44,7 @@
         {
           "name": "v4_infrastructure",
           "path": "v4/infrastructure",
-          "description": "XARF v4 infrastructure class reports", 
+          "description": "XARF v4 infrastructure class reports",
           "requirements": [
             "Parser must successfully parse all samples",
             "Malware family and C2 information must be preserved",
@@ -62,7 +62,7 @@
           ]
         },
         {
-          "name": "v4_vulnerability", 
+          "name": "v4_vulnerability",
           "path": "v4/vulnerability",
           "description": "XARF v4 vulnerability class reports",
           "requirements": [
@@ -73,7 +73,7 @@
         },
         {
           "name": "v4_reputation",
-          "path": "v4/reputation", 
+          "path": "v4/reputation",
           "description": "XARF v4 reputation class reports",
           "requirements": [
             "Parser must successfully parse all samples",
@@ -87,14 +87,14 @@
           "description": "XARF v3 reports for backward compatibility testing",
           "requirements": [
             "Parser must successfully parse v3 format",
-            "Automatic conversion to v4 structure should occur", 
+            "Automatic conversion to v4 structure should occur",
             "Core abuse information must be preserved",
             "Class mapping from v3 to v4 must be correct"
           ]
         }
       ]
     },
-    
+
     "invalid_samples": {
       "description": "Invalid XARF reports that should fail validation",
       "expectation": "validation_failure",
@@ -102,7 +102,7 @@
       "test_groups": [
         {
           "name": "schema_violations",
-          "path": "schema_violations", 
+          "path": "schema_violations",
           "description": "Reports that violate JSON schema requirements",
           "requirements": [
             "Parser must reject all samples",
@@ -131,7 +131,7 @@
           ]
         },
         {
-          "name": "malformed_data", 
+          "name": "malformed_data",
           "path": "malformed_data",
           "description": "Reports with malformed JSON or data",
           "requirements": [
@@ -143,7 +143,7 @@
       ]
     }
   },
-  
+
   "performance_requirements": {
     "parsing_speed": {
       "typical_report": {
@@ -172,7 +172,7 @@
       }
     }
   },
-  
+
   "compatibility_requirements": {
     "xarf_versions": {
       "v4_support": {
@@ -187,7 +187,7 @@
     "evidence_types": {
       "supported_content_types": [
         "text/plain",
-        "text/html", 
+        "text/html",
         "message/rfc822",
         "image/png",
         "image/jpeg",

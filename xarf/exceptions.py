@@ -1,6 +1,6 @@
 """XARF Parser Exceptions."""
 
-from typing import List, Optional
+from typing import Optional
 
 
 class XARFError(Exception):
@@ -10,7 +10,8 @@ class XARFError(Exception):
 class XARFValidationError(XARFError):
     """Raised when XARF report validation fails."""
 
-    def __init__(self, message: str, errors: Optional[List[str]] = None):
+    def __init__(self, message: str, errors: Optional[list[str]] = None) -> None:
+        """Initialize validation error with message and optional error list."""
         super().__init__(message)
         self.errors = errors or []
 
