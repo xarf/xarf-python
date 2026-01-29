@@ -15,7 +15,7 @@ xarf-parser-tests/
 │   ├── valid/                         # Valid XARF reports (should parse successfully)
 │   │   ├── v4/                        # XARF v4 valid samples
 │   │   │   ├── messaging/             # Valid messaging class reports
-│   │   │   ├── connection/            # Valid connection class reports  
+│   │   │   ├── connection/            # Valid connection class reports
 │   │   │   ├── content/               # Valid content class reports
 │   │   │   ├── infrastructure/        # Valid infrastructure class reports
 │   │   │   ├── copyright/             # Valid copyright class reports
@@ -88,12 +88,12 @@ To pass the XARF parser test suite, implementations must:
 
 ### Core Functionality
 1. **Parse valid v4 reports** - All samples in `samples/valid/v4/` parse successfully
-2. **Validate against schema** - Detect and reject schema violations appropriately  
+2. **Validate against schema** - Detect and reject schema violations appropriately
 3. **Apply business rules** - Implement class-specific validation logic
 4. **Handle evidence data** - Process all evidence content types correctly
 5. **Support all classes** - Handle all 7 abuse classes (messaging, connection, content, infrastructure, copyright, vulnerability, reputation)
 
-### Backward Compatibility  
+### Backward Compatibility
 1. **Parse v3 reports** - Handle XARF v3 format with automatic conversion
 2. **Convert v3 to v4** - Map v3 fields to v4 structure appropriately
 3. **Maintain semantics** - Preserve original meaning during conversion
@@ -120,7 +120,7 @@ import os
 def test_valid_samples():
     parser = XARFParser()
     valid_dir = "tests/shared/samples/valid/v4"
-    
+
     for category_dir in os.listdir(valid_dir):
         category_path = os.path.join(valid_dir, category_dir)
         for sample_file in os.listdir(category_path):
@@ -141,13 +141,13 @@ const path = require('path');
 describe('XARF Parser Valid Samples', () => {
   const parser = new XARFParser();
   const validDir = 'tests/shared/samples/valid/v4';
-  
+
   const classDirs = fs.readdirSync(validDir);
   classDirs.forEach(classDir => {
     describe(`${classDir} class`, () => {
       const samples = fs.readdirSync(path.join(validDir, classDir))
         .filter(file => file.endsWith('.json'));
-      
+
       samples.forEach(sample => {
         test(`parses ${sample}`, () => {
           const data = fs.readFileSync(path.join(validDir, classDir, sample));
@@ -177,7 +177,7 @@ import (
 func TestValidSamples(t *testing.T) {
     parser := xarf.NewParser()
     validDir := "tests/shared/samples/valid/v4"
-    
+
     err := filepath.Walk(validDir, func(path string, info os.FileInfo, err error) error {
         if filepath.Ext(path) == ".json" {
             data, err := ioutil.ReadFile(path)
@@ -185,20 +185,20 @@ func TestValidSamples(t *testing.T) {
                 t.Errorf("Failed to read %s: %v", path, err)
                 return nil
             }
-            
+
             report, err := parser.Parse(data)
             if err != nil {
                 t.Errorf("Failed to parse %s: %v", path, err)
                 return nil
             }
-            
+
             if report.XARFVersion != "4.0.0" {
                 t.Errorf("Expected version 4.0.0, got %s in %s", report.XARFVersion, path)
             }
         }
         return nil
     })
-    
+
     if err != nil {
         t.Errorf("Error walking test directory: %v", err)
     }

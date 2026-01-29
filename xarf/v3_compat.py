@@ -7,7 +7,7 @@ allowing parsers to transparently handle legacy reports.
 import uuid
 import warnings
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 
 class XARFv3DeprecationWarning(DeprecationWarning):
@@ -18,7 +18,7 @@ class XARFv3DeprecationWarning(DeprecationWarning):
 warnings.simplefilter("always", XARFv3DeprecationWarning)
 
 
-def is_v3_report(data: Dict[str, Any]) -> bool:
+def is_v3_report(data: dict[str, Any]) -> bool:
     """Detect if a report is XARF v3 format.
 
     Args:
@@ -31,7 +31,7 @@ def is_v3_report(data: Dict[str, Any]) -> bool:
     return "Version" in data and "xarf_version" not in data
 
 
-def convert_v3_to_v4(v3_data: Dict[str, Any]) -> Dict[str, Any]:
+def convert_v3_to_v4(v3_data: dict[str, Any]) -> dict[str, Any]:
     """Convert XARF v3 report to v4 format.
 
     Args:
@@ -73,21 +73,32 @@ def convert_v3_to_v4(v3_data: Dict[str, Any]) -> Dict[str, Any]:
     # Map v3 ReportType to v4 type
     report_type = report.get("ReportType", "").lower()
 
+    # Build reporter contact_info (v4 uses 'domain' not 'type')
+    reporter_org = reporter_info.get("ReporterOrg", "Unknown")
+    reporter_contact = (
+        reporter_info.get("ReporterOrgEmail")
+        or reporter_info.get("ReporterContactEmail")
+        or "unknown@example.com"
+    )
+    # Extract domain from email for v4 contact_info
+    reporter_domain = (
+        reporter_contact.split("@")[-1] if "@" in reporter_contact else "example.com"
+    )
+
+    reporter_v4 = {
+        "org": reporter_org,
+        "contact": reporter_contact,
+        "domain": reporter_domain,
+    }
+
     # Build base v4 structure
-    v4_data: Dict[str, Any] = {
+    v4_data: dict[str, Any] = {
         "xarf_version": "4.0.0",
         "report_id": str(uuid.uuid4()),
         "timestamp": report.get("Date")
         or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "reporter": {
-            "org": reporter_info.get("ReporterOrg", "Unknown"),
-            "contact": (
-                reporter_info.get("ReporterOrgEmail")
-                or reporter_info.get("ReporterContactEmail")
-                or "unknown@example.com"
-            ),
-            "type": "automated",  # v3 didn't distinguish, assume automated
-        },
+        "reporter": reporter_v4,
+        "sender": reporter_v4.copy(),  # v4 requires sender, copy from reporter
         "source_identifier": source.get("IP", "0.0.0.0"),  # nosec B104
         "category": category,
         "type": report_type,
@@ -149,7 +160,7 @@ def _map_evidence_source(v3_method: Optional[str]) -> str:
         return "automated_scan"
 
 
-def _convert_attachments(v3_attachments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def _convert_attachments(v3_attachments: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Convert v3 Attachment array to v4 evidence format."""
     v4_evidence = []
     for attachment in v3_attachments:
@@ -162,7 +173,7 @@ def _convert_attachments(v3_attachments: List[Dict[str, Any]]) -> List[Dict[str,
     return v4_evidence
 
 
-def _add_messaging_fields(v4_data: Dict[str, Any], v3_report: Dict[str, Any]) -> None:
+def _add_messaging_fields(v4_data: dict[str, Any], v3_report: dict[str, Any]) -> None:
     """Add messaging-specific fields from v3 to v4."""
     additional_info = v3_report.get("AdditionalInfo", {})
 
@@ -178,7 +189,7 @@ def _add_messaging_fields(v4_data: Dict[str, Any], v3_report: Dict[str, Any]) ->
 
 
 def _add_connection_fields(
-    v4_data: Dict[str, Any], v3_report: Dict[str, Any], v3_source: Dict[str, Any]
+    v4_data: dict[str, Any], v3_report: dict[str, Any], v3_source: dict[str, Any]
 ) -> None:
     """Add connection-specific fields from v3 to v4."""
     additional_info = v3_report.get("AdditionalInfo", {})
@@ -200,7 +211,7 @@ def _add_connection_fields(
         v4_data["byte_count"] = additional_info["ByteCount"]
 
 
-def _add_content_fields(v4_data: Dict[str, Any], v3_report: Dict[str, Any]) -> None:
+def _add_content_fields(v4_data: dict[str, Any], v3_report: dict[str, Any]) -> None:
     """Add content-specific fields from v3 to v4."""
     additional_info = v3_report.get("AdditionalInfo", {})
 
@@ -217,7 +228,7 @@ def _add_content_fields(v4_data: Dict[str, Any], v3_report: Dict[str, Any]) -> N
 
 
 def _add_infrastructure_fields(
-    v4_data: Dict[str, Any], v3_report: Dict[str, Any]
+    v4_data: dict[str, Any], v3_report: dict[str, Any]
 ) -> None:
     """Add infrastructure-specific fields from v3 to v4."""
     additional_info = v3_report.get("AdditionalInfo", {})

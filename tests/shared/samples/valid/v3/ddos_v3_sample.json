@@ -2,7 +2,7 @@
   "Version": "3.0.0",
   "ReporterInfo": {
     "ReporterOrg": "Example CERT",
-    "ReporterOrgDomain": "cert-example.org", 
+    "ReporterOrgDomain": "cert-example.org",
     "ReporterOrgEmail": "incident@cert-example.org",
     "ReporterContactEmail": "incident@cert-example.org",
     "ReporterContactName": "Incident Response Team",
@@ -10,7 +10,7 @@
   },
   "Disclosure": true,
   "Report": {
-    "ReportClass": "Network", 
+    "ReportClass": "Network",
     "ReportType": "ddos",
     "Date": "2024-01-15T08:15:45Z",
     "Source": {
@@ -27,7 +27,7 @@
     ],
     "AdditionalInfo": {
       "Protocol": "udp",
-      "DestinationIP": "203.0.113.100", 
+      "DestinationIP": "203.0.113.100",
       "DestinationPort": 80,
       "AttackType": "dns_amplification",
       "PacketCount": 15000,

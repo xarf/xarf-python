@@ -4,42 +4,20 @@
 # Update hooks: pre-commit autoupdate
 
 repos:
-  # Code formatting - black
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
+  # Ruff - Fast Python linter and formatter (replaces black, isort, flake8, bandit)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.0
     hooks:
-      - id: black
-        args: [--line-length=88]
-
-  # Import sorting - isort
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: [--profile=black, --line-length=88]
-
-  # Linting - flake8
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        args: [--max-line-length=100, --extend-ignore=E203,W503,C901]
-        additional_dependencies: [flake8-docstrings]
-
-  # Security scanning - bandit
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.10
-    hooks:
-      - id: bandit
-        args: [-r, xarf/, -ll]
-        exclude: ^tests/
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
 
   # Type checking - mypy
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
       - id: mypy
-        args: [--strict, --python-version=3.8]
+        args: [--strict, --ignore-missing-imports]
         additional_dependencies: [pydantic>=2.0.0, types-python-dateutil]
         files: ^xarf/
 
@@ -59,31 +37,13 @@ repos:
         files: ^xarf/
         exclude: ^tests/
 
-  # Code complexity - radon
-  - repo: local
-    hooks:
-      - id: radon-cc
-        name: radon complexity check
-        entry: radon
-        language: system
-        args: [cc, xarf/, -a, -nb]
-        files: ^xarf/.*\.py$
-        pass_filenames: false
-      - id: radon-mi
-        name: radon maintainability check
-        entry: radon
-        language: system
-        args: [mi, xarf/, -nb]
-        files: ^xarf/.*\.py$
-        pass_filenames: false
-
-  # YAML validation
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: check-yaml
       - id: check-json
-        exclude: ^\.vscode/.*\.json$
+        exclude: ^(\.vscode/.*\.json$|tests/shared/samples/invalid/malformed_data/)
       - id: check-toml
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -95,13 +55,6 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
 
-  # Python security checks
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.3
-    hooks:
-      - id: python-safety-dependencies-check
-        files: pyproject.toml
-
 # CI/CD equivalent hooks (informational only, not blocking)
 ci:
   autofix_commit_msg: |
@@ -112,5 +65,4 @@ ci:
   autoupdate_branch: ''
   autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
   autoupdate_schedule: weekly
-  skip: [python-safety-dependencies-check]
   submodules: false

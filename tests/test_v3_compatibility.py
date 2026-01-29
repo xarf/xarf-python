@@ -84,10 +84,15 @@ class TestV3Conversion:
         assert v4_report["source_identifier"] == "192.168.1.100"
         assert v4_report["evidence_source"] == "spamtrap"
 
-        # Verify reporter
+        # Verify reporter (v4 uses 'domain' not 'type')
         assert v4_report["reporter"]["org"] == "Example Anti-Spam"
         assert v4_report["reporter"]["contact"] == "abuse@example.com"
-        assert v4_report["reporter"]["type"] == "automated"
+        assert v4_report["reporter"]["domain"] == "example.com"
+
+        # Verify sender (required in v4, copied from reporter)
+        assert v4_report["sender"]["org"] == "Example Anti-Spam"
+        assert v4_report["sender"]["contact"] == "abuse@example.com"
+        assert v4_report["sender"]["domain"] == "example.com"
 
         # Verify messaging-specific fields
         assert v4_report["protocol"] == "smtp"

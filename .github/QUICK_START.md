@@ -29,7 +29,7 @@ Settings → Branches → Add rule
 Branch: main
 ☑ Require status checks:
   - Quality Checks / quality-checks
-  - Test Suite / test  
+  - Test Suite / test
   - CI Summary / ci-summary
 ☑ Require PR reviews: 1 approval
 ```
