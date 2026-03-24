@@ -9,10 +9,10 @@ description = "Python library for parsing, generating, and validating XARF v4 ab
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "XARF Project", email = "contact@xarf.org"}
+    {name = "XARF Project", email = "admin@abusix.com"}
 ]
 maintainers = [
-    {name = "XARF Project", email = "contact@xarf.org"}
+    {name = "XARF Project", email = "admin@abusix.com"}
 ]
 keywords = ["xarf", "abuse", "security", "parser", "validation"]
 classifiers = [
