@@ -27,6 +27,13 @@ from xarf.models import (
     XARFEvidence,
     XARFReport,
 )
+from xarf.schema_registry import (
+    FieldMetadata,
+    SchemaRegistry,
+    get_registry,
+    reset_registry,
+    schema_registry,
+)
 from xarf.types_connection import (
     ConnectionBaseReport,
     ConnectionReport,
@@ -136,6 +143,12 @@ __all__ = [
     "XARFValidationError",
     "XARFParseError",
     "XARFSchemaError",
+    # Schema registry
+    "schema_registry",
+    "SchemaRegistry",
+    "FieldMetadata",
+    "get_registry",
+    "reset_registry",
     # v3 compatibility
     "is_v3_report",
     "convert_v3_to_v4",
