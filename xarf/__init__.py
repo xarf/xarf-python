@@ -34,6 +34,7 @@ from xarf.schema_registry import (
     reset_registry,
     schema_registry,
 )
+from xarf.schema_validator import SchemaValidator, schema_validator
 from xarf.types_connection import (
     ConnectionBaseReport,
     ConnectionReport,
@@ -149,6 +150,9 @@ __all__ = [
     "FieldMetadata",
     "get_registry",
     "reset_registry",
+    # Schema validator
+    "SchemaValidator",
+    "schema_validator",
     # v3 compatibility
     "is_v3_report",
     "convert_v3_to_v4",
