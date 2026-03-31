@@ -28,7 +28,7 @@ from pydantic import ValidationError as PydanticValidationError
 
 from xarf.exceptions import XARFParseError
 from xarf.models import AnyXARFReport, ParseResult, ValidationWarning
-from xarf.v3_compat import convert_v3_to_v4, is_v3_report
+from xarf.v3_compat import convert_v3_to_v4, get_v3_deprecation_warning, is_v3_report
 from xarf.validator import _validator
 
 # ---------------------------------------------------------------------------
@@ -36,16 +36,6 @@ from xarf.validator import _validator
 # ---------------------------------------------------------------------------
 
 _REPORT_ADAPTER: TypeAdapter[AnyXARFReport] = TypeAdapter(AnyXARFReport)
-
-# ---------------------------------------------------------------------------
-# v3 deprecation warning message (mirrors getV3DeprecationWarning() in JS)
-# ---------------------------------------------------------------------------
-
-_V3_DEPRECATION_MESSAGE = (
-    "XARF v3 format is deprecated. Please upgrade to XARF v4. "
-    "This report will be automatically converted, but v3 support "
-    "will be removed in a future version."
-)
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -116,10 +106,14 @@ def parse(
     # ------------------------------------------------------------------
     if is_v3_report(data):
         # convert_v3_to_v4 emits a Python warnings.warn() internally.
-        data = convert_v3_to_v4(data)
+        # Collect non-fatal conversion messages (e.g. missing ReporterOrg).
+        conversion_msgs: list[str] = []
+        data = convert_v3_to_v4(data, conversion_warnings=conversion_msgs)
         parse_warnings.append(
-            ValidationWarning(field="", message=_V3_DEPRECATION_MESSAGE)
+            ValidationWarning(field="", message=get_v3_deprecation_warning())
         )
+        for msg in conversion_msgs:
+            parse_warnings.append(ValidationWarning(field="", message=msg))
 
     # ------------------------------------------------------------------
     # Step 3 — Validate (schema + unknown fields + missing optional)

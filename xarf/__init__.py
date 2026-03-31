@@ -119,7 +119,9 @@ from xarf.types_vulnerability import (
     VulnerabilityReport,
 )
 from xarf.v3_compat import (
+    XARFv3DeprecationWarning,
     convert_v3_to_v4,
+    get_v3_deprecation_warning,
     is_v3_report,
 )
 from xarf.validator import ValidationResult
@@ -162,6 +164,8 @@ __all__ = [
     # v3 compatibility
     "is_v3_report",
     "convert_v3_to_v4",
+    "get_v3_deprecation_warning",
+    "XARFv3DeprecationWarning",
     # Messaging
     "MessagingBaseReport",
     "SpamIndicators",
