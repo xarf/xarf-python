@@ -24,9 +24,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Fetched XARF schemas
-xarf/schemas/
-
 # Virtual environments
 .env
 .venv
