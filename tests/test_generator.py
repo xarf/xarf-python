@@ -476,9 +476,7 @@ class TestCreateReportStrictMode:
             **_spam_kwargs(),
         )
         assert not result.errors
-        assert any(
-            "completely_unknown_field_xyz" in w.field for w in result.warnings
-        )
+        assert any("completely_unknown_field_xyz" in w.field for w in result.warnings)
 
     def test_strict_unknown_field_becomes_error(self) -> None:
         result = create_report(
@@ -489,7 +487,4 @@ class TestCreateReportStrictMode:
             **_spam_kwargs(),
         )
         assert result.report is None
-        assert any(
-            "completely_unknown_field_xyz" in e.field for e in result.errors
-        )
-
+        assert any("completely_unknown_field_xyz" in e.field for e in result.errors)

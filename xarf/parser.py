@@ -95,9 +95,12 @@ def parse(
     # ------------------------------------------------------------------
     if isinstance(json_data, str):
         try:
-            data: dict[str, Any] = json.loads(json_data)
+            parsed = json.loads(json_data)
         except json.JSONDecodeError as exc:
             raise XARFParseError(f"Invalid JSON: {exc}") from exc
+        if not isinstance(parsed, dict):
+            raise XARFParseError(f"Expected a JSON object, got {type(parsed).__name__}")
+        data: dict[str, Any] = parsed
     else:
         data = json_data
 

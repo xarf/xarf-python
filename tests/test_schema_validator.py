@@ -102,7 +102,8 @@ class TestStrictMode:
 
     def test_strict_mode_valid_when_all_recommended_present(self) -> None:
         report = _valid_spam_report()
-        # Core x-recommended: evidence_source, source_port (already set), evidence, confidence
+        # Core x-recommended: evidence_source, source_port (already set), evidence,
+        # confidence
         # evidence_item x-recommended: description, hash
         # Spam type x-recommended: evidence_source, smtp_to, subject, message_id
         # confidence is 0.0-1.0 per schema

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import TypeAdapter, ValidationError as PydanticValidationError
+from pydantic import TypeAdapter
+from pydantic import ValidationError as PydanticValidationError
 
 from xarf.models import (
     AnyXARFReport,
@@ -17,33 +18,26 @@ from xarf.models import (
     _report_discriminator,
 )
 from xarf.types_connection import (
-    ConnectionBaseReport,
     DdosReport,
     InfectedHostReport,
     LoginAttackReport,
     PortScanReport,
     ReconnaissanceReport,
     ScrapingReport,
-    SqlInjectionReport,
     VulnerabilityScanReport,
 )
 from xarf.types_content import (
     BrandInfringementReport,
     CompromiseIndicator,
-    ContentBaseReport,
     CsamReport,
-    CsemReport,
     ExposedDataReport,
-    FraudReport,
     MalwareReport,
     PhishingReport,
-    RegistrantDetails,
     RemoteCompromiseReport,
     SuspiciousRegistrationReport,
     WebshellDetails,
 )
 from xarf.types_copyright import (
-    CopyrightBaseReport,
     CopyrightCopyrightReport,
     CopyrightCyberlockerReport,
     CopyrightLinkSiteReport,
@@ -57,7 +51,6 @@ from xarf.types_infrastructure import BotnetReport, CompromisedServerReport
 from xarf.types_messaging import (
     BulkIndicators,
     BulkMessagingReport,
-    MessagingBaseReport,
     SpamIndicators,
     SpamReport,
 )
@@ -67,15 +60,22 @@ from xarf.types_vulnerability import (
     ImpactAssessment,
     MisconfigurationReport,
     OpenServiceReport,
-    VulnerabilityBaseReport,
 )
 
 # ---------------------------------------------------------------------------
 # Shared fixtures
 # ---------------------------------------------------------------------------
 
-REPORTER = {"org": "Example Corp", "contact": "abuse@example.com", "domain": "example.com"}
-SENDER = {"org": "Bad Actor LLC", "contact": "noreply@bad.example", "domain": "bad.example"}
+REPORTER = {
+    "org": "Example Corp",
+    "contact": "abuse@example.com",
+    "domain": "example.com",
+}
+SENDER = {
+    "org": "Bad Actor LLC",
+    "contact": "noreply@bad.example",
+    "domain": "bad.example",
+}
 
 BASE_FIELDS: dict[str, object] = {
     "xarf_version": "4.2.0",
@@ -113,7 +113,9 @@ class TestValidationWarning:
 
     def test_required_fields(self) -> None:
         """ValidationWarning requires field and message."""
-        warn = ValidationWarning(field="evidence_source", message="Recommended field missing")
+        warn = ValidationWarning(
+            field="evidence_source", message="Recommended field missing"
+        )
         assert warn.field == "evidence_source"
         assert warn.message == "Recommended field missing"
 
@@ -300,7 +302,9 @@ class TestSpamReport:
 
     def test_optional_fields(self) -> None:
         """SpamReport optional fields default to None."""
-        report = SpamReport(**BASE_FIELDS, category="messaging", type="spam", protocol="smtp")
+        report = SpamReport(
+            **BASE_FIELDS, category="messaging", type="spam", protocol="smtp"
+        )
         assert report.language is None
         assert report.message_id is None
         assert report.recipient_count is None
@@ -315,7 +319,10 @@ class TestSpamReport:
             category="messaging",
             type="spam",
             protocol="smtp",
-            spam_indicators={"suspicious_links": ["http://evil.example/"], "commercial_content": True},
+            spam_indicators={
+                "suspicious_links": ["http://evil.example/"],
+                "commercial_content": True,
+            },
         )
         assert report.spam_indicators is not None
         assert isinstance(report.spam_indicators, SpamIndicators)
@@ -414,7 +421,9 @@ class TestConnectionReports:
 
     def test_infected_host(self) -> None:
         """InfectedHostReport constructs with bot_type."""
-        r = InfectedHostReport(**CONNECTION_BASE, type="infected_host", bot_type="mirai")
+        r = InfectedHostReport(
+            **CONNECTION_BASE, type="infected_host", bot_type="mirai"
+        )
         assert r.bot_type == "mirai"
 
     def test_reconnaissance_requires_probed_resources(self) -> None:
@@ -497,12 +506,15 @@ class TestContentReports:
             BrandInfringementReport(**CONTENT_BASE, type="brand_infringement")
 
     def test_remote_compromise_nested_indicators(self) -> None:
-        """RemoteCompromiseReport accepts nested CompromiseIndicator and WebshellDetails."""
+        """RemoteCompromiseReport accepts nested CompromiseIndicator and
+        WebshellDetails."""
         r = RemoteCompromiseReport(
             **CONTENT_BASE,
             type="remote_compromise",
             compromise_type="webshell",
-            compromise_indicators=[{"type": "file_path", "value": "/var/www/shell.php"}],
+            compromise_indicators=[
+                {"type": "file_path", "value": "/var/www/shell.php"}
+            ],
             webshell_details={"family": "c99", "password_protected": True},
         )
         assert r.compromise_indicators is not None
@@ -511,7 +523,8 @@ class TestContentReports:
         assert isinstance(r.webshell_details, WebshellDetails)
 
     def test_suspicious_registration_requires_fields(self) -> None:
-        """SuspiciousRegistrationReport requires registration_date and suspicious_indicators."""
+        """SuspiciousRegistrationReport requires registration_date and
+        suspicious_indicators."""
         with pytest.raises(PydanticValidationError):
             SuspiciousRegistrationReport(**CONTENT_BASE, type="suspicious_registration")
 
@@ -629,7 +642,11 @@ class TestCopyrightReports:
 # Vulnerability type tests
 # ---------------------------------------------------------------------------
 
-VULN_BASE: dict[str, object] = {**BASE_FIELDS, "category": "vulnerability", "service": "openssh"}
+VULN_BASE: dict[str, object] = {
+    **BASE_FIELDS,
+    "category": "vulnerability",
+    "service": "openssh",
+}
 
 
 class TestVulnerabilityReports:
@@ -648,7 +665,11 @@ class TestVulnerabilityReports:
             cve_id="CVE-2024-12345",
             service_port=22,
             cvss_score=9.8,
-            impact_assessment={"confidentiality": "high", "integrity": "high", "availability": "high"},
+            impact_assessment={
+                "confidentiality": "high",
+                "integrity": "high",
+                "availability": "high",
+            },
         )
         assert r.cve_id == "CVE-2024-12345"
         assert r.service_port == 22
@@ -712,14 +733,34 @@ class TestAnyXARFReportDiscriminator:
         ("category", "report_type", "extra"),
         [
             ("messaging", "spam", {"protocol": "smtp"}),
-            ("messaging", "bulk_messaging", {"protocol": "smtp", "recipient_count": 100}),
-            ("connection", "login_attack", {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp"}),
-            ("connection", "port_scan", {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp"}),
-            ("connection", "ddos", {"first_seen": "2026-01-01T00:00:00Z", "protocol": "udp"}),
+            (
+                "messaging",
+                "bulk_messaging",
+                {"protocol": "smtp", "recipient_count": 100},
+            ),
+            (
+                "connection",
+                "login_attack",
+                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp"},
+            ),
+            (
+                "connection",
+                "port_scan",
+                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp"},
+            ),
+            (
+                "connection",
+                "ddos",
+                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "udp"},
+            ),
             (
                 "connection",
                 "infected_host",
-                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp", "bot_type": "mirai"},
+                {
+                    "first_seen": "2026-01-01T00:00:00Z",
+                    "protocol": "tcp",
+                    "bot_type": "mirai",
+                },
             ),
             (
                 "connection",
@@ -733,7 +774,11 @@ class TestAnyXARFReportDiscriminator:
             (
                 "connection",
                 "scraping",
-                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "http", "total_requests": 1000},
+                {
+                    "first_seen": "2026-01-01T00:00:00Z",
+                    "protocol": "http",
+                    "total_requests": 1000,
+                },
             ),
             (
                 "connection",
@@ -743,7 +788,11 @@ class TestAnyXARFReportDiscriminator:
             (
                 "connection",
                 "vulnerability_scan",
-                {"first_seen": "2026-01-01T00:00:00Z", "protocol": "tcp", "scan_type": "port"},
+                {
+                    "first_seen": "2026-01-01T00:00:00Z",
+                    "protocol": "tcp",
+                    "scan_type": "port",
+                },
             ),
             ("content", "phishing", {"url": "https://evil.example/"}),
             ("content", "malware", {"url": "https://evil.example/payload.exe"}),
@@ -930,7 +979,9 @@ class TestReportDiscriminatorFunction:
 
     def test_model_input(self) -> None:
         """_report_discriminator extracts key from a model instance."""
-        report = SpamReport(**BASE_FIELDS, category="messaging", type="spam", protocol="smtp")
+        report = SpamReport(
+            **BASE_FIELDS, category="messaging", type="spam", protocol="smtp"
+        )
         key = _report_discriminator(report)
         assert key == "messaging/spam"
 
