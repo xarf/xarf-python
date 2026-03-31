@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-03-31
+## [1.0.0] - 2026-03-31
 
 This release is a complete rework of the alpha (`v4.0.0a1`). No backward compatibility with the alpha API is provided. The version numbers will now be independent from the spec to provide release independence for the library.
 
@@ -39,5 +39,5 @@ This release is a complete rework of the alpha (`v4.0.0a1`). No backward compati
 - **`v3_compat.py`**: aligned type mappings exactly with the JS reference implementation (8 types, PascalCase + lowercase variants for each).
 - **`models.py`**: replaced with result dataclasses (`ParseResult`, `CreateReportResult`, `ValidationError`, `ValidationWarning`) and base Pydantic models (`XARFReport`, `XARFEvidence`, `ContactInfo`).
 
-[Unreleased]: https://github.com/xarf/xarf-python/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/xarf/xarf-python/releases/tag/v0.1.0
+[Unreleased]: https://github.com/xarf/xarf-python/compare/v1.0.0...HEAD
+[0.1.0]: https://github.com/xarf/xarf-python/releases/tag/v1.0.0

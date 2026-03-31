@@ -126,7 +126,7 @@ from xarf.v3_compat import (
 )
 from xarf.validator import ValidationResult
 
-__version__ = "0.1.0.dev0"
+__version__ = "1.0.0"
 __author__ = "XARF Project"
 __email__ = "contact@xarf.org"
 
