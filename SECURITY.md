@@ -1,127 +1,57 @@
 # Security Policy
 
-## Supported Versions
-
-We actively support and provide security updates for the following versions:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.x.x   | :white_check_mark: |
-| 1.x.x   | :x:                |
-
 ## Reporting a Vulnerability
 
-We take security vulnerabilities seriously. If you discover a security issue in XARF Python Parser, please report it responsibly.
+The XARF project takes security vulnerabilities seriously. We appreciate your efforts to responsibly disclose your findings.
 
 ### How to Report
 
 **Please DO NOT report security vulnerabilities through public GitHub issues.**
 
-Instead, report security vulnerabilities by:
+Instead, please report security vulnerabilities by emailing:
 
-1. **Email**: Send details to security@xarf.org
-2. **Private Advisory**: Use GitHub's [private security advisory feature](https://github.com/xarf/xarf-python/security/advisories/new)
+**security@abusix.com**
 
 ### What to Include
 
-When reporting a vulnerability, please include:
+Please include the following information in your report:
 
-- Description of the vulnerability
-- Steps to reproduce the issue
-- Affected versions
-- Potential impact assessment
-- Any proof-of-concept code (if applicable)
-- Your name/handle for credit (optional)
+- Type of vulnerability or security concern
+- Affected specification version(s)
+- Detailed description of the security issue
+- Potential impact on implementations
+- Suggested mitigation or fix (if applicable)
 
 ### Response Timeline
 
-- **Acknowledgment**: Within 48 hours of report
-- **Initial Assessment**: Within 5 business days
-- **Status Updates**: Every 7 days until resolution
-- **Fix Timeline**: Critical issues within 30 days, others within 90 days
+- **Initial Response**: Within 48 hours
+- **Status Update**: Within 7 days
+- **Resolution**: Depends on severity and complexity
 
-### Disclosure Policy
+### Security Update Process
 
-- We will coordinate public disclosure with you
-- Security advisories will be published after fixes are released
-- We credit security researchers in advisories (unless you prefer to remain anonymous)
+1. **Triage**: We'll confirm the vulnerability and assess severity
+2. **Specification Review**: We'll review affected specification sections
+3. **Fix Development**: We'll develop and review proposed changes
+4. **Community Review**: We'll engage with implementation maintainers
+5. **Disclosure**: We'll coordinate disclosure timing with you
+6. **Publication**: We'll publish updated specification with security notes
 
-## Security Features
+## Vulnerability Disclosure Policy
 
-This project implements multiple security layers:
+We follow a **coordinated disclosure** model:
 
-### Automated Scanning
-
-- **CodeQL Analysis**: Deep semantic security analysis (weekly + on PRs)
-- **Dependency Review**: PR-based vulnerability scanning
-- **Dependabot**: Automated dependency security updates
-- **Secret Scanning**: Detects committed credentials
-- **Bandit**: Python-specific security linter in CI
-
-### Code Quality Gates
-
-All pull requests must pass:
-
-- Static security analysis (Bandit)
-- Type safety checks (MyPy strict mode)
-- Dependency vulnerability scans
-- Code complexity limits (Radon)
-
-### Security Best Practices
-
-Our codebase follows:
-
-- Strict type hints for safety
-- Input validation via Pydantic models
-- No hardcoded credentials
-- Principle of least privilege
-- Regular dependency updates
-
-## Known Security Considerations
-
-### XARF Report Processing
-
-When processing XARF reports:
-
-1. **Input Validation**: All reports are validated against JSON schema
-2. **Email Parsing**: Uses python-email-validator for safe email processing
-3. **Date Handling**: Uses python-dateutil for timezone-aware parsing
-4. **No Code Execution**: Parser does not execute any user-provided code
-
-### Dependencies
-
-We actively monitor and update dependencies for security issues:
-
-- Automated Dependabot updates for vulnerabilities
-- Grouped minor/patch updates for development dependencies
-- Individual PRs for production dependency major updates
-
-## Security Updates
-
-Security updates are released as:
-
-- **Critical**: Immediate patch release
-- **High**: Patch release within 7 days
-- **Moderate**: Included in next minor release
-- **Low**: Included in next release cycle
-
-Subscribe to [GitHub Security Advisories](https://github.com/xarf/xarf-python/security/advisories) for notifications.
-
-## Responsible Disclosure
-
-We are committed to working with security researchers under responsible disclosure guidelines:
-
-1. Allow reasonable time for fixes before public disclosure
-2. Avoid privacy violations and data destruction
-3. Do not exploit vulnerabilities beyond proof-of-concept
-4. Respect user privacy and data protection regulations
+1. **Private Disclosure**: Report sent to security@abusix.com
+2. **Acknowledgment**: We confirm receipt within 48 hours
+3. **Investigation**: We investigate with specification experts
+4. **Community Review**: We consult with implementation maintainers
+5. **Specification Update**: We publish updated specification
+6. **Public Disclosure**: We publish advisory 7 days after publication
 
 ## Security Hall of Fame
 
-We recognize security researchers who help improve our security:
+We recognize security researchers who responsibly disclose vulnerabilities:
 
-<!-- Security researchers will be listed here after coordinated disclosure -->
+<!-- Security researchers will be listed here -->
 
----
-
-For general inquiries or questions about this policy, contact: security@xarf.org
+_No vulnerabilities reported yet._
