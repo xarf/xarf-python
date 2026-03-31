@@ -11,12 +11,14 @@ Example:
     SpamReport(...)
 """
 
+from xarf._version import SPEC_VERSION
 from xarf.exceptions import (
     XARFError,
     XARFParseError,
     XARFSchemaError,
     XARFValidationError,
 )
+from xarf.generator import create_evidence, create_report
 from xarf.models import (
     AnyXARFReport,
     ContactInfo,
@@ -31,8 +33,6 @@ from xarf.parser import parse
 from xarf.schema_registry import (
     FieldMetadata,
     SchemaRegistry,
-    get_registry,
-    reset_registry,
     schema_registry,
 )
 from xarf.schema_validator import SchemaValidator, schema_validator
@@ -128,14 +128,13 @@ __version__ = "0.1.0.dev0"
 __author__ = "XARF Project"
 __email__ = "contact@xarf.org"
 
-# Spec version this library was built against.
-SPEC_VERSION = "4.2.0"
-
 __all__ = [
     # Version
     "SPEC_VERSION",
     # Public API functions
     "parse",
+    "create_report",
+    "create_evidence",
     # Result types
     "AnyXARFReport",
     "ParseResult",
@@ -155,8 +154,6 @@ __all__ = [
     "schema_registry",
     "SchemaRegistry",
     "FieldMetadata",
-    "get_registry",
-    "reset_registry",
     # Schema validator
     "SchemaValidator",
     "schema_validator",
