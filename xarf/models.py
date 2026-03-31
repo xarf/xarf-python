@@ -53,13 +53,15 @@ class ParseResult:
         report: The parsed report, or ``None`` if parsing failed entirely.
         errors: List of validation errors encountered.
         warnings: List of non-fatal warnings.
-        info: Optional metadata dict (populated when ``show_missing_optional=True``).
+        info: Optional list of missing-field metadata dicts, each with
+            ``"field"`` and ``"message"`` keys.  Populated when
+            ``show_missing_optional=True``.
     """
 
     report: AnyXARFReport | None
     errors: list[ValidationError]
     warnings: list[ValidationWarning]
-    info: dict[str, object] | None = None
+    info: list[dict[str, str]] | None = None
 
 
 @dataclass
@@ -70,13 +72,15 @@ class CreateReportResult:
         report: The created report, or ``None`` if creation failed.
         errors: List of validation errors encountered.
         warnings: List of non-fatal warnings.
-        info: Optional metadata dict.
+        info: Optional list of missing-field metadata dicts, each with
+            ``"field"`` and ``"message"`` keys.  Populated when
+            ``show_missing_optional=True``.
     """
 
     report: AnyXARFReport | None
     errors: list[ValidationError]
     warnings: list[ValidationWarning]
-    info: dict[str, object] | None = None
+    info: list[dict[str, str]] | None = None
 
 
 # ---------------------------------------------------------------------------

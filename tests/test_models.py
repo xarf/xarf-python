@@ -146,15 +146,16 @@ class TestParseResult:
         assert len(result.errors) == 1
 
     def test_with_info(self) -> None:
-        """ParseResult accepts optional info dict."""
+        """ParseResult accepts optional info list of field-message dicts."""
         result = ParseResult(
             report=None,
             errors=[],
             warnings=[],
-            info={"missing_optional": ["evidence_source"]},
+            info=[{"field": "evidence_source", "message": "RECOMMENDED: ..."}],
         )
         assert result.info is not None
-        assert "missing_optional" in result.info
+        assert isinstance(result.info, list)
+        assert result.info[0]["field"] == "evidence_source"
 
 
 class TestCreateReportResult:

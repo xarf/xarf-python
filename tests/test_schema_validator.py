@@ -3,12 +3,10 @@
 from collections import deque
 
 import jsonschema.exceptions
-import pytest
 
 from xarf import ContactInfo, SpamReport
-from xarf.models import ValidationError
+from xarf.models import ValidationError, XARFEvidence
 from xarf.schema_validator import SchemaValidator, schema_validator
-
 
 # ---------------------------------------------------------------------------
 # Helper fixture
@@ -28,7 +26,9 @@ def _valid_spam_report() -> SpamReport:
         xarf_version="4.2.0",
         report_id="02eb480f-8172-431a-9276-c28ba90f694a",
         timestamp="2025-01-11T10:59:45Z",
-        reporter=ContactInfo(org="Test Org", contact="test@test.com", domain="test.com"),
+        reporter=ContactInfo(
+            org="Test Org", contact="test@test.com", domain="test.com"
+        ),
         sender=ContactInfo(org="Test Org", contact="test@test.com", domain="test.com"),
         source_identifier="192.168.1.1",
         category="messaging",
@@ -106,8 +106,6 @@ class TestStrictMode:
         # evidence_item x-recommended: description, hash
         # Spam type x-recommended: evidence_source, smtp_to, subject, message_id
         # confidence is 0.0-1.0 per schema
-        from xarf.models import XARFEvidence
-
         report.evidence_source = "spamtrap"
         report.evidence = [
             XARFEvidence(
@@ -237,3 +235,53 @@ class TestHasTypeSchema:
         assert sv.has_type_schema("unknown_category", "spam") is False
 
 
+# ---------------------------------------------------------------------------
+# TestDictInput — validate() accepts raw dicts
+# ---------------------------------------------------------------------------
+
+
+def _valid_spam_dict() -> dict[str, object]:
+    """Return the same report as _valid_spam_report() but as a plain dict."""
+    _contact = {"org": "Test Org", "contact": "test@test.com", "domain": "test.com"}
+    return {
+        "xarf_version": "4.2.0",
+        "report_id": "02eb480f-8172-431a-9276-c28ba90f694a",
+        "timestamp": "2025-01-11T10:59:45Z",
+        "reporter": _contact,
+        "sender": _contact,
+        "source_identifier": "192.168.1.1",
+        "category": "messaging",
+        "type": "spam",
+        "protocol": "smtp",
+        "smtp_from": "spammer@example.com",
+        "source_port": 25,
+    }
+
+
+class TestDictInput:
+    def test_valid_dict_produces_no_errors(self) -> None:
+        """validate() accepts a raw dict and returns no errors for a valid report."""
+        errors = schema_validator.validate(_valid_spam_dict())
+        assert errors == []
+
+    def test_invalid_dict_produces_errors(self) -> None:
+        """validate() accepts a raw dict and returns errors for an invalid report."""
+        data = _valid_spam_dict()
+        data["report_id"] = "not-a-uuid"  # type: ignore[index]
+        errors = schema_validator.validate(data)
+        assert len(errors) >= 1
+        assert any("report_id" in e.field for e in errors)
+
+    def test_dict_and_model_produce_same_errors(self) -> None:
+        """validate() returns identical errors for a dict and equivalent model."""
+        data = _valid_spam_dict()
+        data["report_id"] = "not-a-uuid"  # type: ignore[index]
+
+        report = _valid_spam_report()
+        report.report_id = "not-a-uuid"
+
+        dict_errors = schema_validator.validate(data)
+        model_errors = schema_validator.validate(report)
+        assert [(e.field, e.message) for e in dict_errors] == [
+            (e.field, e.message) for e in model_errors
+        ]

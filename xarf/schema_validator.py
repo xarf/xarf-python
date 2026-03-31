@@ -41,10 +41,11 @@ from xarf.models import ValidationError, XARFReport
 from xarf.schema_registry import schema_registry as _schema_registry
 
 # ---------------------------------------------------------------------------
-# Internal type alias
+# Internal type aliases
 # ---------------------------------------------------------------------------
 
 _SchemaDict = dict[str, Any]
+_ReportInput = XARFReport | dict[str, Any]
 
 # ---------------------------------------------------------------------------
 # SchemaValidator
@@ -74,12 +75,19 @@ class SchemaValidator:
     # ------------------------------------------------------------------
 
     def validate(
-        self, report: XARFReport, strict: bool = False
+        self, report: _ReportInput, strict: bool = False
     ) -> list[ValidationError]:
         """Validate *report* against the XARF JSON Schema.
 
+        Accepts either a :class:`~xarf.models.XARFReport` instance (converted
+        to a dict via :meth:`~pydantic.BaseModel.model_dump` before validation)
+        or a plain :class:`dict` (used directly).  The dict path is used by
+        :func:`xarf.parser.parse` to validate raw JSON data before Pydantic
+        deserialization.
+
         Args:
-            report: A :class:`~xarf.models.XARFReport` (or subclass) instance.
+            report: A :class:`~xarf.models.XARFReport` (or subclass) instance,
+                or a plain dict containing raw report data.
             strict: When ``True``, fields marked ``x-recommended: true`` in
                 the schema are treated as required.  Defaults to ``False``.
 
@@ -92,7 +100,10 @@ class SchemaValidator:
         """
         self._ensure_schemas_loaded()
 
-        data = report.model_dump(by_alias=True, exclude_none=True)
+        if isinstance(report, dict):
+            data: dict[str, Any] = report
+        else:
+            data = report.model_dump(by_alias=True, exclude_none=True)
 
         validator = self._strict_validator if strict else self._normal_validator
         if validator is None:  # pragma: no cover

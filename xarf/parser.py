@@ -1,259 +1,152 @@
-"""XARF v4 Parser Implementation."""
+"""XARF v4 Parser.
+
+Provides the module-level :func:`parse` function that converts raw JSON (a
+string or a plain dict) into a fully-typed :data:`~xarf.models.AnyXARFReport`
+Pydantic model, returning a :class:`~xarf.models.ParseResult` that carries the
+report together with any validation errors, warnings, and optional
+missing-field info.
+
+Mirrors ``parse()`` in ``xarf-javascript/src/parser.ts``.  All validation
+logic — schema validation, unknown-field detection, and missing-field
+discovery — is delegated to :data:`xarf.validator._validator`, exactly as
+``parser.ts`` delegates to its ``XARFValidator`` instance.
+
+Example:
+    >>> from xarf import parse
+    >>> result = parse(json_string)
+    >>> if not result.errors:
+    ...     report = result.report  # fully typed AnyXARFReport subclass
+"""
+
+from __future__ import annotations
 
 import json
-from datetime import datetime
-from typing import Any, Dict, List, Union
+from typing import Any
 
-from .exceptions import XARFParseError, XARFValidationError
-from .models import ConnectionReport, ContentReport, MessagingReport, XARFReport
-from .v3_compat import convert_v3_to_v4, is_v3_report
+from pydantic import TypeAdapter
+from pydantic import ValidationError as PydanticValidationError
+
+from xarf.exceptions import XARFParseError
+from xarf.models import AnyXARFReport, ParseResult, ValidationWarning
+from xarf.v3_compat import convert_v3_to_v4, is_v3_report
+from xarf.validator import _validator
+
+# ---------------------------------------------------------------------------
+# Module-level TypeAdapter (built once; reused for every parse() call)
+# ---------------------------------------------------------------------------
+
+_REPORT_ADAPTER: TypeAdapter[AnyXARFReport] = TypeAdapter(AnyXARFReport)
+
+# ---------------------------------------------------------------------------
+# v3 deprecation warning message (mirrors getV3DeprecationWarning() in JS)
+# ---------------------------------------------------------------------------
+
+_V3_DEPRECATION_MESSAGE = (
+    "XARF v3 format is deprecated. Please upgrade to XARF v4. "
+    "This report will be automatically converted, but v3 support "
+    "will be removed in a future version."
+)
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
 
-class XARFParser:
-    """XARF v4 Report Parser.
+def parse(
+    json_data: str | dict[str, Any],
+    strict: bool = False,
+    show_missing_optional: bool = False,
+) -> ParseResult:
+    """Parse a XARF v4 report from JSON.
 
-    Parses and validates XARF v4 abuse reports from JSON.
+    Supports both XARF v4 and v3 (legacy) formats.  v3 reports are
+    automatically converted to v4 and a deprecation warning is emitted via
+    :mod:`warnings` as well as added to
+    :attr:`~xarf.models.ParseResult.warnings`.
+
+    In non-strict mode the parser attempts best-effort deserialization even
+    when schema validation errors are present, returning ``report=None`` only
+    when Pydantic is also unable to construct a typed model.
+
+    Args:
+        json_data: A JSON string or a pre-parsed dict containing XARF report
+            data.
+        strict: When ``True``, fields marked ``x-recommended: true`` in the
+            schema are treated as required, unknown fields become errors, and
+            any validation error causes ``report=None`` to be returned
+            immediately without Pydantic deserialization.
+        show_missing_optional: When ``True``,
+            :attr:`~xarf.models.ParseResult.info` is populated with details
+            about optional and recommended fields absent from the report.
+
+    Returns:
+        :class:`~xarf.models.ParseResult` containing:
+
+        - ``report``: The typed report model, or ``None`` on failure.
+        - ``errors``: Validation errors (empty list means valid).
+        - ``warnings``: Non-fatal warnings (v3 conversion, unknown fields).
+        - ``info``: Missing-field metadata when ``show_missing_optional=True``,
+          otherwise ``None``.
+
+    Raises:
+        XARFParseError: If *json_data* is a string containing malformed JSON.
+
+    Example:
+        >>> result = parse('{"xarf_version": "4.2.0", ...}')
+        >>> result.report
+        SpamReport(...)
+        >>> result.errors
+        []
     """
+    parse_warnings: list[ValidationWarning] = []
 
-    def __init__(self, strict: bool = False):
-        """Initialize parser.
-
-        Args:
-            strict: If True, raise exceptions on validation errors.
-                   If False, collect errors for later retrieval.
-        """
-        self.strict = strict
-        self.errors: List[str] = []
-
-        # Supported categories in alpha version
-        self.supported_categories = {"messaging", "connection", "content"}
-
-    def parse(self, json_data: Union[str, Dict[str, Any]]) -> XARFReport:
-        """Parse XARF report from JSON.
-
-        Supports both XARF v4 and v3 (with automatic conversion).
-
-        Args:
-            json_data: JSON string or dictionary containing XARF report
-
-        Returns:
-            XARFReport: Parsed report object
-
-        Raises:
-            XARFParseError: If parsing fails
-            XARFValidationError: If validation fails (strict mode)
-        """
-        self.errors.clear()
-
+    # ------------------------------------------------------------------
+    # Step 1 — JSON parsing
+    # ------------------------------------------------------------------
+    if isinstance(json_data, str):
         try:
-            if isinstance(json_data, str):
-                data = json.loads(json_data)
-            else:
-                data = json_data
-        except json.JSONDecodeError as e:
-            raise XARFParseError(f"Invalid JSON: {e}")
+            data: dict[str, Any] = json.loads(json_data)
+        except json.JSONDecodeError as exc:
+            raise XARFParseError(f"Invalid JSON: {exc}") from exc
+    else:
+        data = json_data
 
-        # Auto-detect and convert v3 reports
-        if is_v3_report(data):
-            try:
-                data = convert_v3_to_v4(data)
-            except Exception as e:
-                raise XARFParseError(f"Failed to convert XARF v3 report: {e}")
+    # ------------------------------------------------------------------
+    # Step 2 — v3 detection and conversion
+    # ------------------------------------------------------------------
+    if is_v3_report(data):
+        # convert_v3_to_v4 emits a Python warnings.warn() internally.
+        data = convert_v3_to_v4(data)
+        parse_warnings.append(
+            ValidationWarning(field="", message=_V3_DEPRECATION_MESSAGE)
+        )
 
-        # Validate basic structure
-        if not self.validate_structure(data):
-            if self.strict:
-                raise XARFValidationError("Validation failed", self.errors)
+    # ------------------------------------------------------------------
+    # Step 3 — Validate (schema + unknown fields + missing optional)
+    # Mirrors: validator.validate(data, strict, showMissingOptional)
+    # ------------------------------------------------------------------
+    result = _validator.validate(
+        data, strict=strict, show_missing_optional=show_missing_optional
+    )
 
-        # Parse based on category
-        report_category = data.get("category")
+    # ------------------------------------------------------------------
+    # Step 4 — Strict mode early return (Python-specific: prevents a
+    # Pydantic discriminator failure on malformed category/type)
+    # ------------------------------------------------------------------
+    if result.errors and strict:
+        return ParseResult(report=None, errors=result.errors, warnings=parse_warnings)
 
-        if report_category not in self.supported_categories:
-            error_msg = (
-                f"Unsupported category '{report_category}' in alpha "
-                f"version. Supported: {self.supported_categories}"
-            )
-            if self.strict:
-                raise XARFValidationError(error_msg)
-            else:
-                self.errors.append(error_msg)
-                # Fall back to base model
-                return XARFReport(**data)
+    # ------------------------------------------------------------------
+    # Step 5 — Pydantic deserialization via discriminated union
+    # ------------------------------------------------------------------
+    try:
+        report = _REPORT_ADAPTER.validate_python(data)
+    except PydanticValidationError:
+        return ParseResult(report=None, errors=result.errors, warnings=parse_warnings)
 
-        try:
-            if report_category == "messaging":
-                return MessagingReport(**data)
-            elif report_category == "connection":
-                return ConnectionReport(**data)
-            elif report_category == "content":
-                return ContentReport(**data)
-            else:
-                return XARFReport(**data)
-
-        except Exception as e:
-            raise XARFParseError(f"Failed to parse {report_category} report: {e}")
-
-    def validate(self, json_data: Union[str, Dict[str, Any]]) -> bool:
-        """Validate XARF report without parsing.
-
-        Args:
-            json_data: JSON string or dictionary containing XARF report
-
-        Returns:
-            bool: True if valid, False otherwise
-        """
-        self.errors.clear()
-
-        try:
-            if isinstance(json_data, str):
-                data = json.loads(json_data)
-            else:
-                data = json_data
-        except json.JSONDecodeError as e:
-            self.errors.append(f"Invalid JSON: {e}")
-            return False
-
-        return self.validate_structure(data)
-
-    def validate_structure(self, data: Dict[str, Any]) -> bool:
-        """Validate basic XARF structure.
-
-        Args:
-            data: Parsed JSON data
-
-        Returns:
-            bool: True if structure is valid
-        """
-        required_fields = {
-            "xarf_version",
-            "report_id",
-            "timestamp",
-            "reporter",
-            "source_identifier",
-            "category",
-            "type",
-            "evidence_source",
-        }
-
-        # Check required fields
-        missing_fields = required_fields - set(data.keys())
-        if missing_fields:
-            self.errors.append(f"Missing required fields: {missing_fields}")
-            return False
-
-        # Check XARF version
-        if data.get("xarf_version") != "4.0.0":
-            self.errors.append(f"Unsupported XARF version: {data.get('xarf_version')}")
-            return False
-
-        # Validate reporter structure
-        reporter = data.get("reporter", {})
-        if not isinstance(reporter, dict):
-            self.errors.append("Reporter must be an object")
-            return False
-
-        reporter_required = {"org", "contact", "type"}
-        missing_reporter = reporter_required - set(reporter.keys())
-        if missing_reporter:
-            self.errors.append(f"Missing reporter fields: {missing_reporter}")
-            return False
-
-        # Validate reporter type
-        if reporter.get("type") not in ["automated", "manual", "hybrid"]:
-            self.errors.append(f"Invalid reporter type: {reporter.get('type')}")
-            return False
-
-        # Validate timestamp format
-        try:
-            datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
-        except (ValueError, AttributeError):
-            self.errors.append(f"Invalid timestamp format: {data.get('timestamp')}")
-            return False
-
-        # Category-specific validation
-        return self.validate_category_specific(data)
-
-    def validate_category_specific(self, data: Dict[str, Any]) -> bool:
-        """Validate category-specific requirements.
-
-        Args:
-            data: Parsed JSON data
-
-        Returns:
-            bool: True if category-specific validation passes
-        """
-        report_category = data.get("category")
-        report_type = data.get("type")
-
-        if report_category == "messaging":
-            return self.validate_messaging(data, report_type or "")
-        elif report_category == "connection":
-            return self.validate_connection(data, report_type or "")
-        elif report_category == "content":
-            return self.validate_content(data, report_type or "")
-
-        return True
-
-    def validate_messaging(self, data: Dict[str, Any], report_type: str) -> bool:
-        """Validate messaging category reports."""
-        valid_types = {"spam", "phishing", "social_engineering"}
-        if report_type not in valid_types:
-            self.errors.append(f"Invalid messaging type: {report_type}")
-            return False
-
-        # Email-specific validation
-        if data.get("protocol") == "smtp":
-            if not data.get("smtp_from"):
-                self.errors.append("smtp_from required for email reports")
-                return False
-            if report_type in ["spam", "phishing"] and not data.get("subject"):
-                self.errors.append("subject required for spam/phishing reports")
-                return False
-
-        return True
-
-    def validate_connection(self, data: Dict[str, Any], report_type: str) -> bool:
-        """Validate connection category reports."""
-        valid_types = {"ddos", "port_scan", "login_attack", "ip_spoofing"}
-        if report_type not in valid_types:
-            self.errors.append(f"Invalid connection type: {report_type}")
-            return False
-
-        # Required fields for connection reports
-        if not data.get("destination_ip"):
-            self.errors.append("destination_ip required for connection reports")
-            return False
-
-        if not data.get("protocol"):
-            self.errors.append("protocol required for connection reports")
-            return False
-
-        return True
-
-    def validate_content(self, data: Dict[str, Any], report_type: str) -> bool:
-        """Validate content category reports."""
-        valid_types = {
-            "phishing_site",
-            "malware_distribution",
-            "defacement",
-            "spamvertised",
-            "web_hack",
-        }
-        if report_type not in valid_types:
-            self.errors.append(f"Invalid content type: {report_type}")
-            return False
-
-        # URL required for content reports
-        if not data.get("url"):
-            self.errors.append("url required for content reports")
-            return False
-
-        return True
-
-    def get_errors(self) -> List[str]:
-        """Get validation errors from last parse/validate call.
-
-        Returns:
-            List[str]: List of validation error messages
-        """
-        return self.errors.copy()
+    return ParseResult(
+        report=report,
+        errors=result.errors,
+        warnings=parse_warnings + result.warnings,
+        info=result.info,
+    )

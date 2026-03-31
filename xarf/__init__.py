@@ -27,6 +27,7 @@ from xarf.models import (
     XARFEvidence,
     XARFReport,
 )
+from xarf.parser import parse
 from xarf.schema_registry import (
     FieldMetadata,
     SchemaRegistry,
@@ -117,7 +118,11 @@ from xarf.types_vulnerability import (
     VulnerabilityBaseReport,
     VulnerabilityReport,
 )
-from xarf.v3_compat import convert_v3_to_v4, is_v3_report
+from xarf.v3_compat import (
+    convert_v3_to_v4,
+    is_v3_report,
+)
+from xarf.validator import ValidationResult
 
 __version__ = "0.1.0.dev0"
 __author__ = "XARF Project"
@@ -129,6 +134,8 @@ SPEC_VERSION = "4.2.0"
 __all__ = [
     # Version
     "SPEC_VERSION",
+    # Public API functions
+    "parse",
     # Result types
     "AnyXARFReport",
     "ParseResult",
@@ -153,6 +160,8 @@ __all__ = [
     # Schema validator
     "SchemaValidator",
     "schema_validator",
+    # Validator
+    "ValidationResult",
     # v3 compatibility
     "is_v3_report",
     "convert_v3_to_v4",
