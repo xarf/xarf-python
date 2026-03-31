@@ -4,69 +4,63 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xarf"
-version = "4.0.0a1"
-description = "XARF v4 Python Parser - Parse and validate XARF v4 abuse reports"
+version = "1.0.0"
+description = "Python library for parsing, generating, and validating XARF v4 abuse reports"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "XARF Project", email = "contact@xarf.org"}
+    {name = "XARF Project", email = "admin@abusix.com"}
 ]
 maintainers = [
-    {name = "XARF Project", email = "contact@xarf.org"}
+    {name = "XARF Project", email = "admin@abusix.com"}
 ]
 keywords = ["xarf", "abuse", "security", "parser", "validation"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Internet :: WWW/HTTP",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Security",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Networking :: Monitoring"
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
-    "jsonschema>=4.0.0",
-    "python-dateutil>=2.8.0",
+    "pydantic>=2.0",
+    "jsonschema>=4.18",
+    "referencing>=0.28",
     "email-validator>=2.0.0",
-    "pydantic>=2.0.0"
 ]
 
 [project.urls]
 "Homepage" = "https://xarf.org"
-"Documentation" = "https://github.com/xarf/xarf-parser-python"
-"Repository" = "https://github.com/xarf/xarf-parser-python"
-"Bug Reports" = "https://github.com/xarf/xarf-parser-python/issues"
+"Documentation" = "https://xarf.org"
+"Repository" = "https://github.com/xarf/xarf-python"
+"Bug Reports" = "https://github.com/xarf/xarf-python/issues"
 "Specification" = "https://github.com/xarf/xarf-spec"
-"Changelog" = "https://github.com/xarf/xarf-parser-python/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0",
-    "mypy>=1.0.0",
-    "isort>=5.0.0",
-    "pre-commit>=3.0.0",
-    "bandit[toml]>=1.7.0",
-    "pydocstyle[toml]>=6.0.0",
-    "radon>=6.0.0",
-    "pip-audit>=2.0.0",
-    "pylint>=2.0.0",
-    "vulture>=2.0.0"
+    "pytest>=8.0",
+    "pytest-cov",
+    "mypy>=1.8",
+    "ruff>=0.4",
+    "bandit[toml]>=1.7",
+    "pre-commit",
+    "build",
+    "twine",
+    "types-jsonschema",
+    "tomli>=2.0; python_version < '3.11'",
 ]
 test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0"
+    "pytest>=8.0",
+    "pytest-cov",
 ]
 
 [tool.setuptools.packages.find]
@@ -74,26 +68,37 @@ where = ["."]
 include = ["xarf*"]
 
 [tool.setuptools.package-data]
-xarf = ["schemas/*.json"]
+xarf = ["schemas/**/*.json", "schemas/.version"]
 
-[tool.black]
+[tool.xarf]
+spec_version = "v4.2.0"
+
+[tool.ruff]
 line-length = 88
-target-version = ["py38"]
-include = '\.pyi?$'
+target-version = "py310"
 
-[tool.isort]
-profile = "black"
-line_length = 88
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "D", "UP", "B", "PLC", "PLE"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]  # docstrings not required on test classes/methods
+
+[tool.ruff.format]
+quote-style = "double"
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.10"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 
 [tool.pytest.ini_options]
-minversion = "7.0"
+minversion = "8.0"
 addopts = "-v --cov=xarf --cov-report=term-missing --cov-report=html"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
@@ -102,7 +107,7 @@ python_functions = ["test_*"]
 
 [tool.coverage.run]
 source = ["xarf"]
-omit = ["tests/*", "setup.py"]
+omit = ["tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -112,58 +117,6 @@ exclude_lines = [
     "raise NotImplementedError"
 ]
 
-[tool.flake8]
-max-line-length = 100
-extend-ignore = ["E203", "W503", "C901"]
-per-file-ignores = [
-    "__init__.py:F401"
-]
-
 [tool.bandit]
 exclude_dirs = ["tests", "venv", ".venv", "build", "dist"]
 skips = ["B101", "B601"]
-
-[tool.pydocstyle]
-convention = "google"
-add_ignore = ["D100", "D104", "D105", "D107"]
-match = "(?!test_).*\\.py"
-match_dir = "^(?!tests|venv|\\.venv|build|dist).*"
-
-[tool.pylint.master]
-ignore = ["CVS"]
-ignore-patterns = [".*_test\\.py"]
-jobs = 1
-
-[tool.pylint.messages_control]
-disable = [
-    "missing-docstring",
-    "bare-except",
-    "locally-disabled",
-    "broad-except",
-    "unused-argument",
-    "no-member"
-]
-
-[tool.pylint.format]
-max-line-length = 100
-indent-string = "    "
-indent-after-paren = 4
-
-[tool.pylint.basic]
-good-names = ["i", "j", "k", "ex", "Run", "_", "ip"]
-bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
-
-[tool.pylint.design]
-max-args = 10
-max-locals = 15
-max-returns = 6
-max-branches = 12
-max-statements = 50
-max-attributes = 10
-min-public-methods = 1
-max-public-methods = 20
-
-[tool.radon]
-exclude = ["tests/*", "venv/*", ".venv/*", "build/*", "dist/*"]
-show_complexity = true
-show_mi = true

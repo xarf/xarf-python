@@ -1,279 +1,286 @@
-# Contributing to XARF Python Parser
+# Contributing to XARF Python Library
 
-Thank you for your interest in contributing to the XARF v4 Python parser! This document provides guidelines for contributing to the implementation.
+Thank you for your interest in contributing to the XARF Python library! We welcome contributions from the community and appreciate your help in making this project better.
 
-## 🤝 How to Contribute
+## Code of Conduct
 
-### Reporting Issues
-- **Bug Reports**: Parser errors, validation issues, or unexpected behavior
-- **Feature Requests**: New validation rules, performance improvements, or API enhancements
-- **Parser Support**: Help with implementing new XARF classes or types
+This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to admin@xarf.org.
 
-### Contributing Code
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/validation-improvement`)
-3. **Make** your changes following our coding standards
-4. **Add tests** for new functionality
-5. **Run** the test suite and linting
-6. **Submit** a pull request
+## How to Contribute
 
-## 🛠️ Development Setup
+### Reporting Bugs
+
+If you find a bug, please create an issue on GitHub with the following information:
+
+- **Clear title and description** of the issue
+- **Steps to reproduce** the problem
+- **Expected behavior** vs. **actual behavior**
+- **Code samples** or test cases that demonstrate the issue
+- **Version** of the library you're using
+- **Python version** and operating system
+
+### Suggesting Features
+
+We welcome feature requests! Please create an issue with:
+
+- **Clear description** of the feature
+- **Use case** explaining why this feature would be useful
+- **Example code** showing how the feature might work
+- **Compatibility considerations** with the XARF specification
+
+### Pull Requests
+
+We actively welcome pull requests! Here's how to contribute:
+
+1. **Fork the repository** and create your branch from `main`
+2. **Make your changes** following our coding standards
+3. **Add tests** for any new functionality
+4. **Ensure all tests pass** and coverage remains >80%
+5. **Update documentation** as needed
+6. **Submit a pull request** with a clear description of changes
+
+## Development Setup
 
 ### Prerequisites
-- Python 3.8+
-- Git
 
-### Installation
-```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/xarf-parser-python.git
-cd xarf-parser-python
+- **Python**: 3.10 or higher
+- **Git**: Latest stable version
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+### Getting Started
 
-# Install development dependencies
-pip install -e ".[dev]"
+1. **Clone your fork:**
 
-# Install pre-commit hooks
-pre-commit install
-```
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/xarf-python.git
+   cd xarf-python
+   ```
+
+2. **Create a virtual environment and install dependencies:**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -e ".[dev]"
+   ```
+
+3. **Install pre-commit hooks:**
+
+   ```bash
+   pre-commit install
+   ```
+
+4. **Run tests:**
+
+   ```bash
+   pytest
+   ```
+
+### Development Commands
+
+- `pytest` — Run the test suite
+- `pytest --cov=xarf` — Generate code coverage report
+- `ruff check xarf/` — Lint
+- `ruff check --fix xarf/` — Auto-fix lint issues
+- `ruff format xarf/` — Format code
+- `ruff format --check xarf/` — Check code formatting
+- `mypy --strict xarf/` — Run type checking
+- `bandit -r xarf/` — Security scanning
+
+## Testing Requirements
+
+All contributions must maintain or improve test coverage:
+
+- **Coverage threshold**: 80% overall — enforced by `pytest-cov`
+- **Unit tests**: Required for all new functions and classes
+- **Integration tests**: Required for parser and generator functionality
+- **Test file location**: Tests should be in the `tests/` directory
+- **No schema mocking**: tests must use real schemas loaded from the bundle
 
 ### Running Tests
+
 ```bash
-# Run full test suite
-pytest
-
-# Run with coverage
-pytest --cov=xarf
-
-# Run specific test file
-pytest tests/test_parser.py
-
-# Run with verbose output
-pytest -v
+pytest                     # Run all tests
+pytest -v                  # Verbose output
+pytest --cov=xarf          # With coverage report
+pytest tests/test_parse.py # Run a specific file
 ```
 
-### Code Quality
+### Writing Tests
+
+We use pytest. Example test structure:
+
+```python
+from xarf import parse
+
+def test_parse_valid_report() -> None:
+    result = parse({
+        # ... valid XARF data
+    })
+
+    assert not result.errors
+    assert result.report is not None
+    assert result.report.category == "connection"
+    assert result.report.type == "ddos"
+
+def test_parse_returns_errors_for_invalid_data() -> None:
+    result = parse({})
+
+    assert len(result.errors) > 0
+```
+
+## Code Style Guidelines
+
+### Python Standards
+
+- **Language version**: Python 3.10+
+- **Type annotations**: required on all public functions and methods
+- **Docstrings**: Google style for all public APIs (`Args:`, `Returns:`, `Raises:`, `Example:`)
+- **Strict mypy**: all code must pass `mypy --strict xarf/`
+
+See [pyproject.toml](pyproject.toml) for the full `ruff` and `mypy` configuration.
+
+### Naming Conventions
+
+- **Functions / methods**: `snake_case` (e.g., `parse`, `create_report`, `create_evidence`)
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `SPEC_VERSION`)
+- **Classes**: `PascalCase` (e.g., `ParseResult`, `XARFReport`, `SchemaRegistry`)
+- **Type aliases**: `PascalCase` (e.g., `AnyXARFReport`, `ConnectionReport`)
+
+### Code Organization
+
+- **One module per file** for main components
+- **Related types** grouped in category-specific files (`types_messaging.py`, etc.)
+- **Export from `__init__.py`** for public API — use `xarf-javascript/src/index.ts` as the reference for which names to expose
+
+### Formatting and Linting
+
+We use `ruff` for both formatting and linting. Configuration lives in [pyproject.toml](pyproject.toml).
+
 ```bash
-# Format code
-black xarf/
-isort xarf/
-
-# Lint code
-flake8 xarf/
-
-# Type checking
-mypy xarf/
+ruff format xarf/          # Auto-format
+ruff format --check xarf/  # Check formatting
+ruff check xarf/           # Lint
+ruff check --fix xarf/     # Auto-fix linting issues
 ```
 
-## 📋 Contribution Guidelines
+A pre-commit hook runs both automatically on staged files.
 
-### Code Standards
-- **Follow PEP 8** style guidelines
-- **Use type hints** for all functions and methods
-- **Write docstrings** for public APIs
-- **Keep functions focused** and single-purpose
-- **Use descriptive variable names**
+### Documentation
 
-### Testing Requirements
-- **Unit tests** for all new functionality
-- **Integration tests** for end-to-end scenarios
-- **Test edge cases** and error conditions
-- **Maintain >90% test coverage**
-- **Mock external dependencies**
+- **Google-style docstrings** for all public APIs
+- **Type annotations** on all parameters and return values
+- **Inline comments** for non-obvious logic
+- **README updates** for new features
 
-### API Design
-- **Consistent naming** with existing patterns
-- **Clear error messages** with actionable information
-- **Backward compatibility** when possible
-- **Performance considerations** for high-volume use
+## Commit Message Conventions
 
-## 🏗️ Architecture Overview
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-### Core Components
 ```
-xarf/
-├── __init__.py          # Public API exports
-├── parser.py            # Main XARFParser class
-├── models.py            # Pydantic data models
-├── exceptions.py        # Custom exception classes
-└── validators.py        # Validation logic (future)
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
 ```
 
-### Design Principles
-- **Pydantic models** for data validation and serialization
-- **Modular design** for easy extension
-- **Clear separation** between parsing and validation
-- **Comprehensive error handling** with context
+### Types
 
-## 🎯 Priority Areas
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring without feature changes
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks, dependency updates
 
-### High Priority (Alpha → Beta)
-- **Complete class coverage** (infrastructure, copyright, vulnerability, reputation)
-- **Enhanced validation** beyond basic schema checking
-- **Performance optimization** for high-volume processing
-- **XARF v3 compatibility** layer
+### Examples
 
-### Medium Priority (Beta → Stable)
-- **Advanced validation rules** (business logic, cross-field validation)
-- **CLI tools** for command-line usage
-- **Integration examples** with popular security tools
-- **Comprehensive benchmarking**
+```
+feat(parser): add support for reputation/threat_intelligence reports
 
-### Future Enhancements
-- **Evidence handling** (compression, validation)
-- **Bulk processing** utilities
-- **Plugin architecture** for custom validators
-- **Async parsing** support
+Implement Pydantic model and schema-driven validation for the
+threat_intelligence report type. Includes shared test samples.
 
-## 📝 Code Style Examples
-
-### Function Documentation
-```python
-def parse_report(self, json_data: Union[str, Dict[str, Any]]) -> XARFReport:
-    """Parse XARF report from JSON data.
-    
-    Args:
-        json_data: JSON string or dictionary containing XARF report data
-        
-    Returns:
-        XARFReport: Parsed and validated report object
-        
-    Raises:
-        XARFParseError: If JSON parsing fails
-        XARFValidationError: If validation fails in strict mode
-        
-    Example:
-        >>> parser = XARFParser()
-        >>> report = parser.parse('{"xarf_version": "4.0.0", ...}')
-        >>> print(report.class_)
-        'messaging'
-    """
+Closes #123
 ```
 
-### Error Handling
-```python
-try:
-    report = parser.parse(json_data)
-except XARFValidationError as e:
-    logger.error(f"Validation failed: {e}")
-    for error in e.errors:
-        logger.debug(f"  - {error}")
-    raise
-except XARFParseError as e:
-    logger.error(f"Parse failed: {e}")
-    raise
+```
+fix(schema_validator): deduplicate errors from master and core schemas
+
+Errors reported by both the master schema and the core schema for the
+same field were appearing twice in ValidationError lists.
+
+Fixes #456
 ```
 
-### Test Structure
-```python
-class TestMessagingReports:
-    """Test parsing of messaging class reports."""
-    
-    def test_valid_spam_report(self):
-        """Test parsing of valid spam report."""
-        report_data = {
-            "xarf_version": "4.0.0",
-            # ... complete valid data
-        }
-        
-        parser = XARFParser()
-        report = parser.parse(report_data)
-        
-        assert isinstance(report, MessagingReport)
-        assert report.class_ == "messaging"
-        assert report.type == "spam"
-    
-    def test_missing_required_field(self):
-        """Test handling of missing required fields."""
-        invalid_data = {"xarf_version": "4.0.0"}  # Missing required fields
-        
-        parser = XARFParser(strict=True)
-        
-        with pytest.raises(XARFValidationError) as exc_info:
-            parser.parse(invalid_data)
-        
-        assert "Missing required fields" in str(exc_info.value)
+```
+docs(readme): update schema management section
 ```
 
-## 🔍 Testing Guidelines
+## Pull Request Process
 
-### Test Categories
-- **Unit Tests**: Individual functions and methods
-- **Integration Tests**: Full parsing workflows
-- **Validation Tests**: Schema and business rule validation
-- **Performance Tests**: Benchmarking and profiling
+1. **Update documentation** for any changed functionality
+2. **Add tests** covering your changes
+3. **Ensure all tests pass**: `pytest`
+4. **Verify coverage**: `pytest --cov=xarf`
+5. **Check linting**: `ruff check xarf/`
+6. **Verify formatting**: `ruff format --check xarf/`
+7. **Run type checking**: `mypy --strict xarf/`
+8. **Update CHANGELOG.md** if applicable
+9. **Create pull request** with clear description
 
-### Sample Test Data
-```python
-# Use realistic but anonymized data
-SAMPLE_SPAM_REPORT = {
-    "xarf_version": "4.0.0",
-    "report_id": "00000000-0000-0000-0000-000000000001",
-    "timestamp": "2024-01-01T12:00:00Z",
-    "reporter": {
-        "org": "Test Security Provider",
-        "contact": "test@example.com",
-        "type": "automated"
-    },
-    "source_identifier": "192.0.2.1",  # RFC 3330 test IP
-    "category": "messaging",
-    "type": "spam",
-    "evidence_source": "spamtrap"
-}
-```
+### Pull Request Template
 
-## 💬 Community Guidelines
+Your PR description should include:
 
-### Pull Request Process
-1. **Clear description** of changes and motivation
-2. **Reference issues** when applicable
-3. **Include tests** for new functionality
-4. **Update documentation** if needed
-5. **Respond to feedback** promptly
+- **What**: Brief description of changes
+- **Why**: Motivation and context
+- **How**: Implementation approach
+- **Testing**: How you tested the changes
+- **Breaking changes**: Any breaking changes (if applicable)
+- **Related issues**: Link to related issues
 
-### Review Criteria
-- **Code quality** and style consistency
-- **Test coverage** and quality
-- **Performance impact** consideration
-- **API compatibility** maintenance
-- **Documentation** completeness
+### Code Review
 
-## 📞 Getting Help
+All pull requests require review before merging:
 
-- **GitHub Issues**: Bug reports and feature requests
-- **GitHub Discussions**: Questions and design discussions
-- **Code Review**: Request feedback on draft PRs
-- **Email**: contact@xarf.org for sensitive issues
+- At least **one approval** from a maintainer
+- All **CI checks must pass**
+- **No unresolved discussions**
+- **Merge conflicts resolved**
 
-## 🏆 Recognition
+## XARF Specification Compliance
 
-Contributors are recognized through:
-- Git commit history and contributor graphs
-- Release notes and changelogs
-- PyPI package metadata
-- Conference presentations (with permission)
+All implementations must conform to the [XARF specification](https://xarf.org):
 
-## 🚀 Release Process
+- Parse all **required fields**
+- Validate **data types** correctly
+- Support all **standard report types**
+- Handle **optional fields** appropriately
+- Implement proper **error handling**
+- Maintain **backward compatibility** when possible
 
-### Alpha Releases (4.0.0a1, 4.0.0a2, ...)
-- **Frequent releases** with new features
-- **Breaking changes** allowed
-- **Community feedback** encouraged
-- **PyPI pre-release** tags
+## Release Process
 
-### Beta Releases (4.0.0b1, ...)
-- **Feature complete** for initial scope
-- **API stabilization** focus
-- **No breaking changes** without major justification
-- **Performance optimization**
+Releases are managed by maintainers:
 
-### Stable Releases (4.0.0, 4.0.1, ...)
-- **Production ready** quality
-- **Semantic versioning** strictly followed
-- **Long-term support** commitment
-- **Comprehensive documentation**
+1. Version bumped following [Semantic Versioning](https://semver.org/)
+2. CHANGELOG.md updated with changes
+3. Git tag created for the version
+4. Package published to PyPI
 
-Thank you for helping make XARF parsing reliable and efficient! 🐍
+## Getting Help
+
+- **Documentation**: Check the [README](README.md) and code comments
+- **Issues**: Search existing issues or create a new one
+- **Discussions**: Use GitHub Discussions for questions
+- **Email**: Contact the maintainers at contact@xarf.org
+
+## License
+
+By contributing to XARF Python Library, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+
+---
+
+Thank you for contributing to XARF! Your efforts help make abuse reporting more effective and standardized across the internet.

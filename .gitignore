@@ -45,24 +45,15 @@ coverage.xml
 
 # MyPy
 .mypy_cache/
+
+# Ruff
+.ruff_cache/
 .dmypy.json
 dmypy.json
 
-# IDE - VS Code (keep shared settings, ignore user-specific)
-.vscode/*
-!.vscode/settings.json
-!.vscode/extensions.json
-!.vscode/tasks.json
-!.vscode/launch.json
-
-# IDE - IntelliJ IDEA (keep shared settings, ignore user-specific)
-.idea/*
-!.idea/inspectionProfiles/
-!.idea/codeStyles/
-!.idea/runConfigurations/
-!.idea/vcs.xml
-!.idea/misc.xml
-!.idea/.gitignore
+# IDE
+.vscode/
+.idea/
 
 # IDE - Other
 *.swp
