@@ -4,8 +4,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/xarf/xarf-parser-python.git
-cd xarf-parser-python
+git clone https://github.com/xarf/xarf-python.git
+cd xarf-python
 
 # Create and activate virtual environment
 python3 -m venv venv
@@ -212,7 +212,7 @@ echo 'export PIP_INDEX_URL=https://pypi.org/simple/' >> ~/.zshrc
 
 ## Getting Help
 
-- GitHub Issues: https://github.com/xarf/xarf-parser-python/issues
+- GitHub Issues: https://github.com/xarf/xarf-python/issues
 - XARF Specification: https://github.com/xarf/xarf-spec
 - Email: contact@xarf.org
 

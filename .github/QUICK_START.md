@@ -13,7 +13,7 @@ Settings → Environments → New environment
 **On PyPI.org:**
 ```
 Account Settings → Publishing → Add GitHub OIDC publisher
-- Repository: xarf/xarf-parser-python
+- Repository: xarf/xarf-python
 - Workflow: publish-pypi.yml
 - Environment: pypi
 ```
@@ -29,7 +29,7 @@ Settings → Branches → Add rule
 Branch: main
 ☑ Require status checks:
   - Quality Checks / quality-checks
-  - Test Suite / test  
+  - Test Suite / test
   - CI Summary / ci-summary
 ☑ Require PR reviews: 1 approval
 ```

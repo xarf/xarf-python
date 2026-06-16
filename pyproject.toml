@@ -42,11 +42,11 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://xarf.org"
-"Documentation" = "https://github.com/xarf/xarf-parser-python"
-"Repository" = "https://github.com/xarf/xarf-parser-python"
-"Bug Reports" = "https://github.com/xarf/xarf-parser-python/issues"
+"Documentation" = "https://github.com/xarf/xarf-python"
+"Repository" = "https://github.com/xarf/xarf-python"
+"Bug Reports" = "https://github.com/xarf/xarf-python/issues"
 "Specification" = "https://github.com/xarf/xarf-spec"
-"Changelog" = "https://github.com/xarf/xarf-parser-python/blob/master/CHANGELOG.md"
+"Changelog" = "https://github.com/xarf/xarf-python/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [

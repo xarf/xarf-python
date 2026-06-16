@@ -339,7 +339,7 @@ def check_for_deprecations():
 
 - GitHub Watch: https://github.com/xarf/xarf-python
 - Release RSS: https://github.com/xarf/xarf-python/releases.atom
-- PyPI RSS: https://pypi.org/rss/project/xarf-parser/releases.xml
+- GitHub Tags: https://github.com/xarf/xarf-python/tags
 
 ---
 

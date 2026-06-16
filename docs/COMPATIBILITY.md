@@ -79,11 +79,8 @@ print(report.to_json())
 ### Step 1: Update Dependencies
 
 ```bash
-# Upgrade to latest version
-pip install --upgrade xarf-parser>=4.0.0
-
-# Or specify exact version
-pip install xarf-parser==4.0.0
+# Install latest version (alpha — not yet on PyPI, install from source)
+pip install git+https://github.com/xarf/xarf-python.git
 ```
 
 ### Step 2: Code Changes

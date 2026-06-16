@@ -2,7 +2,7 @@
 
 ## Overview
 
-Successfully created 4 comprehensive GitHub Actions workflows for the xarf-parser-python project, adapted from abusix-parsers best practices while removing AWS/CodeArtifact dependencies.
+Successfully created 4 comprehensive GitHub Actions workflows for the xarf-python project, adapted from abusix-parsers best practices while removing AWS/CodeArtifact dependencies.
 
 ## Created Workflows
 
@@ -187,9 +187,9 @@ omit = ["tests/*", "setup.py"]
 Configure at https://pypi.org/manage/account/publishing/
 
 **PyPI Settings:**
-- Project: `xarf-parser`
+- Project: `xarf`
 - Owner: `xarf` (or your GitHub org/user)
-- Repository: `xarf-parser-python`
+- Repository: `xarf-python`
 - Workflow: `publish.yml`
 - Environment: `pypi`
 
@@ -378,9 +378,9 @@ Compared to sequential execution:
 
 4. **Add Badges to README**
    ```markdown
-   [![Quality](https://github.com/xarf/xarf-parser-python/actions/workflows/quality-checks.yml/badge.svg)](https://github.com/xarf/xarf-parser-python/actions/workflows/quality-checks.yml)
-   [![Tests](https://github.com/xarf/xarf-parser-python/actions/workflows/test.yml/badge.svg)](https://github.com/xarf/xarf-parser-python/actions/workflows/test.yml)
-   [![Security](https://github.com/xarf/xarf-parser-python/actions/workflows/security-scan.yml/badge.svg)](https://github.com/xarf/xarf-parser-python/actions/workflows/security-scan.yml)
+   [![Quality](https://github.com/xarf/xarf-python/actions/workflows/quality-checks.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/quality-checks.yml)
+   [![Tests](https://github.com/xarf/xarf-python/actions/workflows/test.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/test.yml)
+   [![Security](https://github.com/xarf/xarf-python/actions/workflows/security-scan.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/security-scan.yml)
    ```
 
 5. **Monitor First Week**
@@ -399,5 +399,5 @@ Compared to sequential execution:
 
 **Implementation Date:** 2025-11-20
 **Based on:** abusix-parsers workflows
-**Adapted for:** xarf-parser-python (pip + setuptools)
+**Adapted for:** xarf-python (pip + setuptools)
 **Status:** ✅ Ready for testing

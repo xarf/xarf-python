@@ -213,9 +213,9 @@ print(report.category)  # Clean Python access
 ## Links
 
 - [XARF v4 Specification](https://xarf.org/docs/specification/)
-- [GitHub Repository](https://github.com/xarf/xarf-parser-python)
-- [PyPI Package](https://pypi.org/project/xarf-parser/)
-- [Issue Tracker](https://github.com/xarf/xarf-parser-python/issues)
+- [GitHub Repository](https://github.com/xarf/xarf-python)
+- [Install from source](https://github.com/xarf/xarf-python) (alpha — not yet on PyPI)
+- [Issue Tracker](https://github.com/xarf/xarf-python/issues)
 - [XARF Website](https://xarf.org)
 
 ## Versioning

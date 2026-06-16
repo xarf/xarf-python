@@ -339,9 +339,9 @@ json_output = report.model_dump_json(by_alias=True)
 ## Contact & Resources
 
 ### Repository
-- **GitHub**: https://github.com/xarf/xarf-parser-python
-- **Issues**: https://github.com/xarf/xarf-parser-python/issues
-- **Pull Requests**: https://github.com/xarf/xarf-parser-python/pulls
+- **GitHub**: https://github.com/xarf/xarf-python
+- **Issues**: https://github.com/xarf/xarf-python/issues
+- **Pull Requests**: https://github.com/xarf/xarf-python/pulls
 
 ### Documentation
 - **This Codebase**: `/docs/` directory
@@ -366,4 +366,4 @@ json_output = report.model_dump_json(by_alias=True)
 
 **Prepared by**: System Architecture Designer (Claude Code)
 **Date**: 2025-11-20
-**Project**: XARF Python Library (xarf-parser-python → xarf)
+**Project**: XARF Python Library (xarf-python, package: xarf)

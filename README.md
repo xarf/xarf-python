@@ -1,8 +1,6 @@
 # XARF v4 Python Parser
 
 [![CI](https://github.com/xarf/xarf-python/actions/workflows/ci.yml/badge.svg)](https://github.com/xarf/xarf-python/actions/workflows/ci.yml)
-[![PyPI version](https://badge.fury.io/py/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
-[![Python versions](https://img.shields.io/pypi/pyversions/xarf-parser.svg)](https://pypi.org/project/xarf-parser/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-blue.svg)](SECURITY.md)
 
@@ -27,12 +25,12 @@ This library is currently in **alpha** development (v4.0.0-alpha). It supports t
 ## 📦 Installation
 
 ```bash
-# Alpha releases (recommended for early testing)
-pip install xarf-parser==4.0.0a1
+# Install from source (alpha — not yet on PyPI, install from source)
+pip install git+https://github.com/xarf/xarf-python.git
 
 # Install from source for latest development
-git clone https://github.com/xarf/xarf-parser-python.git
-cd xarf-parser-python
+git clone https://github.com/xarf/xarf-python.git
+cd xarf-python
 pip install -e .
 
 # Install with development dependencies
@@ -423,8 +421,8 @@ def verify_evidence_hash(evidence_item: dict) -> bool:
 
 ```bash
 # Setup development environment
-git clone https://github.com/xarf/xarf-parser-python.git
-cd xarf-parser-python
+git clone https://github.com/xarf/xarf-python.git
+cd xarf-python
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -e ".[dev,test]"
@@ -529,7 +527,7 @@ This project follows semantic versioning with alpha/beta releases:
 ## 💬 Support
 
 - **Documentation**: https://xarf.org
-- **GitHub Issues**: https://github.com/xarf/xarf-parser-python/issues
+- **GitHub Issues**: https://github.com/xarf/xarf-python/issues
 - **Discussions**: https://github.com/xarf/xarf-spec/discussions
 - **Email**: contact@xarf.org
 

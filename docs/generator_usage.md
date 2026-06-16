@@ -409,4 +409,4 @@ print(json.dumps(report, indent=2))
 
 - [XARF Specification](https://xarf.org)
 - [XARF Parser Documentation](../README.md)
-- [GitHub Repository](https://github.com/xarf/xarf-parser-python)
+- [GitHub Repository](https://github.com/xarf/xarf-python)

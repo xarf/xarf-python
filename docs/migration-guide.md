@@ -378,7 +378,7 @@ if failed:
 ## Support and Questions
 
 - **Specification**: See [XARF v4 Specification](https://github.com/xarf/xarf-spec)
-- **Issues**: Report bugs at [GitHub Issues](https://github.com/xarf/xarf-parser-python/issues)
+- **Issues**: Report bugs at [GitHub Issues](https://github.com/xarf/xarf-python/issues)
 - **Community**: Join discussions at [XARF Discussions](https://github.com/xarf/xarf-spec/discussions)
 
 ## Timeline
